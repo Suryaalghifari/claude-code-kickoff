@@ -88,7 +88,7 @@ placeholder mentah.
 | `docs/<NN>-git-workflow.md` | `git-workflow.md.tmpl` | Isi dari `references/git.md` sesuai skala |
 | `.claude/commands/work.md` | `commands-work.md.tmpl` | `/work` — alur satu pekerjaan, lihat `references/workflow.md` |
 | `.claude/commands/verify.md` | `commands-verify.md.tmpl` | `/verify` — DoD dijalankan, lihat `references/verify.md` |
-| `.claude/settings.json` | `settings.json.tmpl` | Hooks + allowlist + deny git |
+| `.claude/settings.json` | `settings.json.tmpl` | Hooks + allowlist + deny git + **deny perusak data** — isi `{{DENY_STACK}}` dari stack, lihat `references/interview.md` |
 | `.claude/hooks/*.py` | `hooks/` | `chmod +x` setelah disalin, lalu **uji sekali** |
 | `.gitignore` | — | Sesuai stack. `.env` masuk, `.env.example` di-commit |
 | `.graphifyignore` | `graphifyignore.tmpl` | Hanya bila pakai graphify — lihat di bawah |

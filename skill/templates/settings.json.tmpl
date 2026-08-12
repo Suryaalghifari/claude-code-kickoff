@@ -11,12 +11,16 @@
       "Bash({{CMD_FORMAT}})"
     ],
     "_catatan_deny": "Menegakkan aturan #1: git dijalankan USER. Aturan di prompt bisa dilupakan model; deny tidak. Hapus blok ini kalau AI memang boleh menjalankan git.",
+    "_catatan_deny_data": "Baris di bawah git = operasi yang MENGHANCURKAN DATA. Tak ada 'git revert' untuk basis data yang sudah dikosongkan. Baris terakhir diisi sesuai stack proyek saat kickoff; hook destructive-guard.py menangkap yang lolos dari pola ini (rantai &&, bash -c, target make).",
     "deny": [
       "Bash(git push *)",
       "Bash(git commit *)",
       "Bash(git merge *)",
       "Bash(git cherry-pick *)",
-      "Bash(git rebase *)"
+      "Bash(git rebase *)",
+      "Bash(git reset --hard *)",
+      "Bash(git clean -f*)",
+      {{DENY_STACK}}
     ]
   },
 
@@ -34,6 +38,12 @@
         "matcher": "Write|Edit",
         "hooks": [
           { "type": "command", "command": ".claude/hooks/secret-scan.py" }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": ".claude/hooks/destructive-guard.py" }
         ]
       }
     ]

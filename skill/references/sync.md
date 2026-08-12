@@ -50,6 +50,11 @@ Cari penanda kiri; kalau ketemu, berkas itu basi dan usulkan penggantinya.
 | langkah 4 tanpa "2 tetangga" | prosedur cari-dua-tetangga | `.claude/commands/work.md`, `CLAUDE.md` §Alur |
 | lapis 3 tanpa pemeriksaan jumlah query | gerbang query untuk alur yang menyentuh DB | `.claude/commands/verify.md` |
 | tak ada `0X-deployment.md` padahal deploy sudah jalan | realitas deploy dibaca dari CI/Dockerfile | usulkan dokumen baru — lihat `audit.md` §A2 |
+| **tak ada `.claude/hooks/destructive-guard.py`** | pagar perintah perusak data | salin hook + daftarkan `PreToolUse`/`Bash` + isi `deny` sesuai stack (`interview.md`) |
+
+> Baris terakhir **prioritas tertinggi** apa pun urutan lainnya: proyek tanpa pagar ini bisa
+> kehilangan seluruh basis datanya dalam satu perintah, dan itu satu-satunya kerusakan di daftar ini
+> yang tak bisa dibatalkan.
 
 > **Menambah baris ke tabel ini adalah bagian dari mencabut aturan.** Aturan yang dicabut tanpa
 > penandanya dicatat di sini membuat `--sync` buta terhadapnya — dan proyek lama akan memegangnya

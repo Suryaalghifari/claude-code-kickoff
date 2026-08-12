@@ -32,6 +32,23 @@ printf '%s' 'bukan json' | ./skill/templates/hooks/secret-scan.py; echo "harus 0
 `session-start.py` diuji dari folder proyek ber-`docs/SYSTEMMAP.md`; dari folder tanpa itu ia harus
 **diam** dan keluar 0.
 
+`destructive-guard.py` — arah "lolos" yang lebih penting di sini: hook yang memblokir kerja
+sehari-hari akan dimatikan orang, dan begitu dimatikan ia tak melindungi apa pun.
+
+```bash
+g() { printf '%s' "{\"tool_input\":{\"command\":\"$1\"}}" \
+      | ./skill/templates/hooks/destructive-guard.py >/dev/null 2>&1; echo "$2 → $?"; }
+
+g 'php artisan migrate:fresh'          'harus 2'
+g 'psql -c \"DROP DATABASE x;\"'       'harus 2'
+g 'docker compose down -v'             'harus 2'
+g 'git push --force origin main'       'harus 2'
+g 'php artisan migrate'                'harus 0'
+g 'rm -rf node_modules'                'harus 0'
+g 'docker compose down'                'harus 0'
+g 'git push --force-with-lease o b'    'harus 0'
+```
+
 ## 3. Placeholder
 
 `templates/` boleh ber-`{{PLACEHOLDER}}` — memang itu gunanya. `references/` **tidak**, kecuali

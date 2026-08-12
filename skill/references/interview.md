@@ -97,7 +97,33 @@ Ini yang bikin agen tidak kemana-mana sehari-hari.
    - test: `_______`
    - build: `_______`
    - **verifikasi end-to-end: bagaimana bentuk nyatanya di proyek ini?**
-5. **Hooks** — ada perintah yang ingin ditegakkan/dilarang otomatis? (lihat `settings.json.tmpl`)
+5. **Hooks & pagar perusak data** — jangan tanya "mau dilarang apa"; user tak punya kewajiban
+   mengingat perintah fatal stack-nya. **Sodorkan daftarnya**, ia tinggal mengoreksi.
+
+### Mengisi `{{DENY_STACK}}` di `settings.json.tmpl`
+
+Turunkan dari stack yang dipilih di Ronde 3. Yang dicari: perintah yang **menghapus data dan tak
+bisa dibatalkan** — bukan yang sekadar berisiko.
+
+| Stack | Baris `deny` |
+|---|---|
+| Laravel | `"Bash(php artisan migrate:fresh *)"`, `"Bash(php artisan migrate:refresh *)"`, `"Bash(php artisan db:wipe *)"` |
+| Prisma | `"Bash(npx prisma migrate reset *)"`, `"Bash(prisma migrate reset *)"` |
+| Rails | `"Bash(rails db:drop *)"`, `"Bash(rails db:reset *)"` |
+| Django | `"Bash(python manage.py flush *)"` |
+| Docker dipakai | `"Bash(docker compose down -v *)"`, `"Bash(docker volume rm *)"` |
+
+Sampaikan begini: *"Untuk stack ini saya pasang pagar pada `migrate:fresh`, `migrate:refresh`, dan
+`db:wipe` — ketiganya menghapus seluruh isi basis data dan tak bisa dibatalkan. Claude tak akan
+menjalankannya; kalau kamu memang butuh di lokal, kamu yang jalankan. Ada yang mau ditambah?"*
+
+Tak ada baris yang cocok (mis. proyek tanpa basis data) → isi `{{DENY_STACK}}` dengan **baris
+kosong** dan hapus komanya. Jangan meninggalkan placeholder mentah, dan jangan memasang pagar
+untuk perintah yang tak ada di proyek ini.
+
+> `destructive-guard.py` tetap dipasang apa pun stack-nya — pola dasarnya (`DROP DATABASE`,
+> `TRUNCATE`, `rm -rf /`, `git reset --hard`) berlaku lintas stack, dan ia menangkap yang lolos
+> dari `deny`: rantai `&&`, `bash -c`, target `make`.
 6. Ada preferensi keras dari proyek sebelumnya yang wajib dibawa?
 
 > Poin 4 bagian terakhir jangan dilewat. "Lint hijau" bukan bukti fitur jalan — dan di situlah

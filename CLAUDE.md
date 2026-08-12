@@ -130,9 +130,5 @@ install.sh              salin skill/ → ~/.claude/skills/kickoff/
 ./install.sh --uninstall  # lepas
 bash -n install.sh        # cek sintaks
 
-# uji hook (harus 2 lalu 0)
-printf '%s' '{"tool_input":{"file_path":"a.php","content":"password = \"Sup3rS3cretPw\""}}' \
-  | ./skill/templates/hooks/secret-scan.py; echo "exit=$?"
-printf '%s' '{"tool_input":{"file_path":"a.php","content":"$k = config(\"app.key\");"}}' \
-  | ./skill/templates/hooks/secret-scan.py; echo "exit=$?"
+# uji ketiga hook dua arah → /verify §2, SATU SUMBER (jangan disalin ke sini)
 ```

@@ -84,7 +84,8 @@ docs/
 ├── commands/verify.md       /verify — DoD dijalankan, bukan diingat
 └── hooks/
     ├── session-start.py     suntik §Fokus + §Utang tiap awal sesi
-    └── secret-scan.py       tolak menulis rahasia ke berkas (blokir, exit 2)
+    ├── secret-scan.py       tolak menulis rahasia ke berkas (blokir, exit 2)
+    └── destructive-guard.py tolak perintah perusak data (blokir, exit 2)
 .gitignore · .graphifyignore
 ```
 

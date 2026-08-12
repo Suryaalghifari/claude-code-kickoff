@@ -63,6 +63,7 @@ prompt bisa dilupakan model; hook tidak.
 |---|---|
 | "Jangan jalankan `git commit/push`" | `permissions.deny` |
 | "Jangan tulis rahasia ke berkas" | `PreToolUse` pada `Write\|Edit` |
+| "Jangan jalankan perintah yang menghapus data" | `permissions.deny` **+** `PreToolUse` pada `Bash` — deny mencocokkan bentuk perintah, hook membaca seluruh stringnya |
 | "Baca peta/status dulu sebelum mulai" | `SessionStart` |
 | "Format harus X" | linter di pre-commit, bukan prosa di dokumen |
 
