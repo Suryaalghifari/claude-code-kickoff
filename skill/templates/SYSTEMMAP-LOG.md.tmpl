@@ -1,0 +1,37 @@
+# SYSTEMMAP — Log Pengerjaan
+
+Riwayat tiap pekerjaan yang selesai, **terbaru di atas**. Ringkasannya di
+[SYSTEMMAP.md §Log](SYSTEMMAP.md#log) — berkas ini menyimpan detailnya: keputusan yang diambil,
+jebakan yang ditemui, dan bukti verifikasi.
+
+> Entri **append-only**. Menambah = tambah section di paling atas. **Jangan menyunting entri lama** —
+> riwayat harus mencerminkan apa yang benar-benar terjadi, termasuk yang memalukan.
+
+> **Rotasi:** pada ~40 entri, pindahkan yang lama **utuh** ke `log-archive/<tahun>-Q<n>.md` dan
+> tautkan di bawah. Jangan diringkas — riwayat yang diedit belakangan berhenti jadi riwayat.
+> Ini satu-satunya berkas yang tumbuh linear tanpa rem; tanpa rotasi ia berakhir tak terbaca.
+
+---
+
+<!--
+FORMAT ENTRI — salin saat menambah:
+
+## YYYY-MM-DD #ID
+
+<satu kalimat: apa yang berubah>
+
+### Yang dikerjakan
+- ...
+
+### Yang sempat salah
+<Bagian paling bernilai dari berkas ini. Bug yang lolos, asumsi yang meleset, sinyal yang
+menyesatkan. Kalau memang mulus, tulis "—". Jangan dihapus bagiannya.>
+
+### Bukti verifikasi
+<Bukan "lint hijau". Bukti fiturnya benar-benar jalan: alur apa yang dijalankan, hasilnya apa.>
+
+### Sisa / utang
+<Pindahkan juga ke SYSTEMMAP §Utang Terbuka supaya tak terkubur di sini.>
+
+---
+-->

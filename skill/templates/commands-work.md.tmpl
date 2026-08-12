@@ -1,0 +1,58 @@
+---
+description: Mulai satu pekerjaan (tambah atau revisi fitur) dengan alur yang benar
+argument-hint: <deskripsi fitur / yang mau direvisi>
+---
+
+Kerjakan: **$ARGUMENTS**
+
+Ikuti lima langkah di bawah. Jangan lompat ke penulisan kode.
+
+## 1. Orientasi
+
+Buka `docs/SYSTEMMAP.md`. Item ini sudah ada di peta? Statusnya apa? Ada dependensi yang belum
+beres? Kalau belum ada, tambahkan barisnya sebagai 🟨 — pekerjaan yang tak ada di peta jadi
+pekerjaan yang lupa dicatat.
+
+## 2. Gali yang sudah diketahui
+
+**Wajib kalau ini revisi. Jangan dilewat.**
+
+```bash
+grep -i "<modul/fitur terkait>" docs/SYSTEMMAP-LOG.md docs/decisions/*.md
+```
+
+- Entri LOG menyebut bagian ini → **baca bagian "Yang sempat salah"** sebelum mengubah apa pun
+- Ada berkas `decisions/` → bentuknya sekarang hasil keputusan sadar; jangan dibongkar tanpa
+  membaca alasannya
+- Komentar "why" di kode sekitar → jebakan yang sudah pernah ditemukan orang lain
+
+Kode yang terlihat aneh sering aneh **karena alasan**. Merapikannya tanpa membaca riwayat adalah
+cara paling umum mengulang bug yang sudah pernah diperbaiki.
+
+Laporkan apa yang kamu temukan — atau bahwa tak ada temuan — sebelum lanjut.
+
+## 3. Putuskan dulu kalau besar
+
+Butuh `docs/decisions/00X-<slug>.md` bila pekerjaan ini mengubah arah, menutup opsi lain, memakan
+berhari-hari, atau membatalkan keputusan lama.
+
+Membatalkan keputusan lama → **buat berkas baru**, tandai yang lama `⚠️ DIGANTI oleh 00Y`. Jangan
+disunting.
+
+Kecil dan jelas → lewati langkah ini.
+
+## 4. Kerjakan
+
+Ikuti konvensi proyek **dan pola kode di sekitarnya**. Menyimpang dari pola sebelah boleh, asal
+alasannya layak ditulis sebagai komentar "why".
+
+**Jangan melebar** dari yang diminta. Rapikan yang kamu sentuh, bukan yang kebetulan terlihat.
+
+## 5. Tutup
+
+1. Jalankan **`/verify`** — kelima lapis, termasuk alur nyata
+   *(kalau ini revisi: buktikan juga alur lama tidak rusak)*
+2. Protokol `SYSTEMMAP`: status → entri LOG → utang terbuka → siap di-commit user
+3. Sarankan nama branch + pesan commit sesuai konvensi. **User yang mengeksekusi git.**
+
+Belum diverifikasi = **🟨, bukan ✅**.

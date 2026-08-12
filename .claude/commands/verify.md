@@ -1,0 +1,82 @@
+---
+description: Jalankan Definition of Done repo skill ini
+---
+
+Jalankan berurutan, **berhenti di kegagalan pertama**. Jangan lanjut membawa kegagalan, dan jangan
+pernah melaporkan "sebagian besar hijau".
+
+Repo ini isinya markdown + dua hook Python — tak ada build, tak ada suite test. Yang menggantikan
+keduanya adalah **menjalankan hooknya sungguhan** dan **menjalankan skillnya sungguhan**.
+
+## 1. Sintaks pemasang
+
+```bash
+bash -n install.sh
+```
+
+## 2. Hook — diuji dua arah
+
+Hook rusak **gagal diam-diam**: ia terpasang, terlihat wajar, dan tak pernah menghalangi apa pun.
+Karena itu keduanya wajib diperiksa, bukan hanya yang "tidak error".
+
+```bash
+printf '%s' '{"tool_input":{"file_path":"a.php","content":"password = \"Sup3rS3cretPw\""}}' \
+  | ./skill/templates/hooks/secret-scan.py; echo "harus 2 → $?"
+
+printf '%s' '{"tool_input":{"file_path":"a.php","content":"$k = config(\"app.key\");"}}' \
+  | ./skill/templates/hooks/secret-scan.py; echo "harus 0 → $?"
+
+printf '%s' 'bukan json' | ./skill/templates/hooks/secret-scan.py; echo "harus 0 → $?"
+```
+
+`session-start.py` diuji dari folder proyek ber-`docs/SYSTEMMAP.md`; dari folder tanpa itu ia harus
+**diam** dan keluar 0.
+
+## 3. Placeholder
+
+`templates/` boleh ber-`{{PLACEHOLDER}}` — memang itu gunanya. `references/` **tidak**, kecuali
+disertai cara mengisinya.
+
+```bash
+grep -rn '{{' skill/references/     # tiap temuan harus punya section "Mengisi ..."
+```
+
+## 4. Router sinkron
+
+Tiap berkas di `skill/references/` wajib punya baris di tabel routing `CLAUDE.md`, dan sebaliknya.
+
+```bash
+for f in skill/references/*.md; do
+  grep -q "$(basename "$f")" CLAUDE.md || echo "TAK ADA DI ROUTER: $f"
+done
+```
+
+## 5. Alur nyata — yang paling menentukan
+
+Empat langkah di atas membuktikan berkasnya utuh. **Tak satu pun membuktikan skillnya bekerja.**
+
+```bash
+mkdir -p /tmp/uji-kickoff && cd /tmp/uji-kickoff
+claude          # lalu: /kickoff   (atau /kickoff --audit di salinan repo nyata)
+```
+
+Yang diperiksa: wawancaranya menajamkan atau terasa seperti formulir · tingkat kompleksitas yang
+ditebak masuk akal · **tak ada keputusan terkunci yang alasannya tak pernah kamu sebut** ·
+nol placeholder tertinggal di hasilnya · hook yang dihasilkan benar-benar jalan.
+
+Poin ketiga yang paling penting: skill yang mengarang alasan lebih berbahaya daripada skill yang
+bertanya terlalu sering.
+
+## Keluaran
+
+```markdown
+### Bukti verifikasi
+- `bash -n install.sh` → lolos
+- Hook secret-scan → blokir 2, lolos 0, json rusak 0
+- Placeholder di references/ → 0 tanpa penjelasan
+- Router ↔ references → sinkron N/N
+- **Alur nyata:** <apa yang dijalankan, di folder apa, hasilnya apa yang terlihat>
+```
+
+Baris terakhir tak boleh berupa nama perintah. Ada yang gagal atau dilewat → katakan yang mana,
+dengan keluarannya.

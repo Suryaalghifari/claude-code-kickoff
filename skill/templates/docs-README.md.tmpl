@@ -1,0 +1,36 @@
+# Dokumentasi Teknis — {{NAMA_PROYEK}}
+
+{{RINGKASAN_1_KALIMAT}}
+
+> Tabel keputusan terkunci ada di [`../CLAUDE.md`](../CLAUDE.md) — **satu sumber saja**.
+> Jangan disalin ke sini; dua salinan pasti berbeda suatu hari.
+
+## Daftar Dokumen
+
+| No | Dokumen | Isi |
+|----|---------|-----|
+{{DAFTAR_DOKUMEN}}
+| — | [SYSTEMMAP](SYSTEMMAP.md) | Status pengerjaan — di-update tiap pekerjaan beres |
+| — | [SYSTEMMAP-LOG](SYSTEMMAP-LOG.md) | Riwayat & post-mortem, append-only |
+| — | [decisions/](decisions/) | Keputusan skala-fitur, ditulis sebelum dikerjakan |
+
+## Yang sengaja TIDAK didokumentasikan di depan
+
+{{TIDAK_DIBUAT}}
+
+Alasannya sama untuk semuanya: **murah diubah belakangan.** Menulisnya di hari pertama menghasilkan
+tebakan yang harus dibongkar. Tumbuhkan bersama kode.
+
+## Konvensi Dokumen
+
+- **Bahasa:** {{BAHASA_DOK}}
+- **Status keputusan:** `[DIPUTUSKAN]` · `[REKOMENDASI]` · `[BELUM]`
+- Satu dokumen **> 400 baris** → tanda ia menampung dua topik. Pecah.
+- **Tidak ada dokumen tanpa baris di tabel routing `CLAUDE.md`.** Dokumen tanpa pemicu tak pernah
+  dibuka — kalau tak layak masuk router, ia tak layak dibuat.
+
+## Status Dokumen
+
+| Versi | Tanggal | Perubahan |
+|-------|---------|-----------|
+| 0.1 | {{TANGGAL}} | Draft awal dari `/kickoff` |

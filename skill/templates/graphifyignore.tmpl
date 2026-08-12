@@ -1,0 +1,28 @@
+# Dokumen sengaja dikeluarkan dari graf kode.
+#
+# Alasannya terukur: pada satu proyek nyata, dari 8.185 edge hanya *3* yang menyeberang dari
+# node dokumen ke node kode. Sisi dokumen jadi pulau terpisah — ~900 node yang mengencerkan
+# hasil query tanpa pernah menghubungkanmu ke satu baris kode pun. Navigasi dokumen sudah
+# ditangani tabel routing di CLAUDE.md, dan itu index buatan manusia yang lebih akurat.
+#
+# Bangun dengan:  graphify . --code-only     ← WAJIB --code-only, lihat alasan di atas
+# Perbarui:       graphify update .          ← AST-only; dijalankan /verify setelah semua hijau
+#
+# PENTING: `update` tidak membersihkan graf yang terlanjur tercampur — ia hanya me-re-extract
+# berkas kode. Kalau `graph.json` masih memuat node bertipe `document`, buang `graphify-out/`
+# lalu bangun ulang dengan --code-only.
+#
+# Pastikan `graphify-out/` masuk .gitignore: ia di-generate lokal, bukan kode proyek.
+
+docs/
+*.md
+
+# Referensi & artefak — bukan kode aktif
+Template/
+vendor/
+node_modules/
+dist/
+build/
+.next/
+.nuxt/
+coverage/

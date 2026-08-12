@@ -1,0 +1,112 @@
+# CLAUDE.md
+
+Briefing untuk Claude Code di repo ini. **Baca ini dulu sebelum tugas apa pun.**
+
+> **Batas keras: 200 baris.** Berkas ini **router**, bukan gudang. Detail tinggal di `docs/`.
+> Kalau mendekati batas, pindahkan isi aturan terpanjang ke dokumen dan sisakan satu baris + tautan.
+
+---
+
+## Apa proyek ini
+
+{{RINGKASAN_3_KALIMAT}}
+
+```
+{{STRUKTUR_FOLDER}}
+```
+
+---
+
+## Keputusan TERKUNCI (jangan diubah tanpa instruksi user)
+
+| Aspek | Keputusan | Alasan |
+|-------|-----------|--------|
+{{TABEL_KEPUTUSAN}}
+
+> Ragu pada salah satu keputusan? **Tanya user** — jangan diam-diam memilih yang lain.
+> Yang bertanda `[BELUM]` memang belum diputuskan; jangan ditebak.
+
+---
+
+## Mulai sesi
+
+1. [docs/SYSTEMMAP.md](docs/SYSTEMMAP.md) — **§Fokus** & **§Utang Terbuka**: kerjakan apa, apa yang
+   tertinggal
+2. Kalau tugasnya menyambung pekerjaan besar → berkas terkait di [docs/decisions/](docs/decisions/)
+3. Baru buka dokumen sesuai tabel di bawah
+
+---
+
+## Dokumen mana untuk tugas apa
+
+| Kalau tugasnya… | Baca dulu |
+|-----------------|-----------|
+| Orientasi menyeluruh | [docs/README.md](docs/README.md) + berkas ini |
+| Status pengerjaan | [docs/SYSTEMMAP.md](docs/SYSTEMMAP.md) |
+| Kenapa sesuatu diputuskan | [docs/decisions/](docs/decisions/) |
+| Riwayat & post-mortem | [docs/SYSTEMMAP-LOG.md](docs/SYSTEMMAP-LOG.md) |
+{{TABEL_ROUTING}}
+
+> **Tidak ada dokumen tanpa baris di tabel ini.** Dokumen yang tak punya pemicu tak pernah dibuka —
+> kalau menambah dokumen, tambahkan barisnya di sini juga.
+
+---
+
+## Alur satu pekerjaan
+
+1. **Orientasi** — cek [SYSTEMMAP](docs/SYSTEMMAP.md); belum ada di peta? tambahkan sebagai 🟨
+2. **Gali** — `grep -i "<modul>" docs/SYSTEMMAP-LOG.md docs/decisions/*.md` **sebelum menyentuh
+   kode lama**. Kode yang terlihat aneh sering aneh karena alasan; baca "Yang sempat salah"
+3. **Putuskan** — mengubah arah / menutup opsi / berhari-hari → tulis `docs/decisions/00X` dulu
+4. **Kerjakan** — ikuti konvensi & pola kode sekitar. Jangan melebar dari yang diminta
+5. **Tutup** — `/verify` → protokol SYSTEMMAP → sarankan branch & commit (user yang eksekusi)
+
+> Versi lengkap: **`/work <deskripsi>`**. Untuk **revisi**, langkah 2 wajib — risiko utamanya
+> regresi, dan bukti verifikasinya harus mencakup "alur lama tidak rusak".
+
+---
+
+## Aturan kerja WAJIB
+
+> **Satu aturan maksimal 3 baris.** Lebih panjang = badannya pindah ke dokumen, sisakan perintah +
+> tautan. Aturan yang bisa ditegakkan hook → jadikan hook, lalu hapus dari sini.
+
+1. **GIT DIJALANKAN USER, BUKAN CLAUDE.** Jangan menjalankan `git init/add/commit/push/merge/
+   cherry-pick/rebase`, membuat branch, membuka PR, atau men-deploy. **Boleh menyarankan** nama
+   branch & pesan commit sesuai konvensi — user yang mengeksekusi. {{TAUTAN_GIT}}
+2. **Ikuti konvensi koding** {{TAUTAN_KONVENSI}}. Komentar **hanya "WHY"** yang non-obvious;
+   {{BAHASA_KODE_KOMENTAR}}; DRY (rule of three), fungsi kecil, type everything.
+3. **Rujuk dokumen, jangan mengarang.** Ragu soal keputusan → cek dokumen atau tanya user.
+4. **Update SYSTEMMAP** saat pekerjaan selesai — protokolnya di [docs/SYSTEMMAP.md](docs/SYSTEMMAP.md).
+   Keputusan besar ditulis di `docs/decisions/` **sebelum** dikerjakan, bukan sesudah.
+5. **Sepakati kontrak dulu** sebelum implementasi lintas-bagian.
+6. **Jangan commit secret.** `.env` di-gitignore; `.env.example` yang di-commit.
+7. **Jangan menandai ✅ sebelum Definition of Done hijau** (aturan 8).
+8. **Definition of Done = `/verify` hijau seluruhnya** — format, analysis, test, build, dan
+   **alur nyata**. Perintahnya ada di [`.claude/commands/verify.md`](.claude/commands/verify.md),
+   **satu sumber**. "Kelihatan jalan" ≠ selesai; belum diverifikasi = 🟨, bukan ✅.
+
+<!--
+  Aturan 9 ke atas SENGAJA KOSONG.
+
+  Diisi hanya saat kesalahan yang sama terjadi DUA KALI. Sekali itu kecelakaan; dua kali itu pola,
+  dan pola bisa dicegah. Aturan yang lahir dari kegagalan nyata jauh lebih dipatuhi daripada
+  aturan yang ditulis di hari pertama.
+
+  Bentuk yang bekerja — spesifik, beralasan, bisa diperiksa:
+    9. **<larangan/keharusan konkret>.** <alasan singkat>. Lihat docs/<NN>-<nama>.md#<anchor>.
+
+  Bentuk yang gagal — kabur, tak bisa diperiksa:
+    9. Tulis kode yang bersih dan ikuti best practice.
+
+  Yang bisa ditegakkan hook, jadikan hook (.claude/settings.json) — aturan di prompt itu himbauan,
+  hook itu penegakan.
+-->
+
+---
+
+## Perintah dev
+
+```bash
+{{PERINTAH_DEV}}
+```

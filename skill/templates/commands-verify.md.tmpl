@@ -1,0 +1,45 @@
+---
+description: Jalankan Definition of Done lengkap, termasuk verifikasi alur nyata
+---
+
+Jalankan Definition of Done proyek ini (CLAUDE.md #8) **berurutan, berhenti di kegagalan pertama**.
+Jangan lanjut ke lapis berikutnya membawa kegagalan, dan jangan pernah melaporkan
+"sebagian besar hijau".
+
+1. **Format** — `{{CMD_FORMAT}}`
+2. **Static analysis / type check** — `{{CMD_ANALYZE}}`
+3. **Test** — `{{CMD_TEST}}`
+4. **Build** — `{{CMD_BUILD}}`
+5. **Alur nyata** — {{HOW_E2E}}
+
+## Soal lapis 5
+
+Lapis 1–4 membuktikan kode ter-format, konsisten, dan yang diuji lulus. **Tak satu pun membuktikan
+fiturnya jalan untuk pemakai** — dan di situlah kegagalan diam terjadi.
+
+{{CATATAN_E2E}}
+
+Kalau otomasi browser tersedia, pakai dan simpan tangkapan layarnya. Kalau tidak, **minta user
+menjalankan alurnya dan melaporkan hasilnya** — jangan tandai selesai atas nama asumsi.
+
+## 6. Segarkan peta kode
+
+{{LANGKAH_GRAPHIFY}}
+
+## Keluaran
+
+Kalau kelimanya hijau, hasilkan blok ini untuk ditempel ke `docs/SYSTEMMAP-LOG.md`:
+
+```markdown
+### Bukti verifikasi
+- Format: `<perintah>` → 0 masalah
+- Analysis: `<perintah>` → 0 error
+- Test: `<perintah>` → N lolos
+- Build: `<perintah>` → sukses
+- **Alur nyata:** <apa yang dijalankan, di mana, hasilnya apa yang terlihat>
+```
+
+Baris terakhir **tak boleh berupa nama perintah** — ia menceritakan alur yang dijalani dan apa yang
+terlihat. Kalau kamu tak bisa menuliskannya, kamu belum memverifikasi.
+
+Ada yang gagal atau dilewat → katakan yang mana, dengan keluarannya, dan **status tetap 🟨**.

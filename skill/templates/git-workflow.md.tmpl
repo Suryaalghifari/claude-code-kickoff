@@ -1,0 +1,87 @@
+# {{NN}} — Git Workflow
+
+> **Git dijalankan USER, bukan Claude.** Claude boleh menyarankan nama branch & pesan commit —
+> user yang mengeksekusi. Aturan ini juga ada sebagai aturan #1 di [CLAUDE.md](../CLAUDE.md).
+
+---
+
+## Penamaan Branch
+
+Pola: `tipe/deskripsi-singkat-kebab-case`
+
+| Tipe | Untuk | Contoh |
+|------|-------|--------|
+| `feat/` | Fitur / kemampuan baru | `feat/kartu-project-spotlight` |
+| `fix/` | Perbaikan bug | `fix/upload-avif-gagal` |
+| `refactor/` | Rapikan kode, perilaku tetap | `refactor/standardisasi-respons` |
+| `chore/` | Dependency, config, build | `chore/upgrade-{{FRAMEWORK}}` |
+| `docs/` | Dokumentasi saja | `docs/spesifikasi-api-v1` |
+
+- **Spesifik, bukan umum** — `feat/perbaikan` ❌ → `feat/kartu-project-spotlight` ✅
+- Huruf kecil & dash. Tanpa spasi, kapital, atau `_`
+- Ringkas, 2–4 kata
+- **Satu branch satu tujuan.** Butuh kata "dan" → pecah
+
+---
+
+## Pesan Commit — Conventional Commits
+
+```
+feat(laporan): cetak laporan mutasi ke PDF
+└┬─┘ └──┬───┘  └──────────┬─────────────┘
+ │      │                 └── ringkasan: kata kerja, ≤60 char, tanpa titik
+ │      └── skop (opsional): area yang disentuh
+ └── tipe: sama seperti branch
+```
+
+| ❌ Buruk | ✅ Baik |
+|----------|---------|
+| `update` | `fix(cache): invalidasi tag saat unpublish` |
+| `fix bug` | `fix(auth): tolak token yang sudah di-blacklist` |
+| `wip` | `feat(hero): badge tech stack dinamis dari API` |
+
+- **Kata kerja perintah:** "tambah", "perbaiki", "hapus"
+- **Satu commit = satu perubahan utuh.** Dua hal tak terkait → dua commit
+- **Jangan commit `wip`** ke branch yang akan di-PR
+- **Badan menjelaskan KENAPA** — diff sudah menunjukkan apa. Enam bulan lagi, `git log`
+  satu-satunya yang ingat alasannya
+
+---
+
+## Strategi Branch
+
+{{SKEMA_BRANCH}}
+
+**`main` tidak pernah menerima commit langsung** — masuk lewat PR.
+
+---
+
+## Alur Satu Fitur
+
+Satu fitur = satu branch = satu PR.
+
+```bash
+git checkout main && git pull origin main
+git checkout -b feat/<deskripsi>
+
+# kerja & commit — stage HANYA berkas relevan, jangan `git add .` membabi buta
+git add <berkas>
+git commit -m "feat(<skop>): <ringkasan>"
+
+git push -u origin feat/<deskripsi>
+# di GitHub: buka PR → {{MERGE_STRATEGY}}
+```
+
+{{CATATAN_MERGE}}
+
+**Update `docs/SYSTEMMAP.md` + entri `SYSTEMMAP-LOG.md` ikut dalam PR yang sama** — supaya peta
+selalu sinkron dengan kode.
+
+---
+
+## Yang tidak pernah di-commit
+
+`.env` · kunci & token · artefak build · dump data · berkas besar biner.
+`.env.example` yang di-commit.
+
+{{BAGIAN_DEPLOY}}

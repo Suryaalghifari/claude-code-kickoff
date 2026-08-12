@@ -1,0 +1,41 @@
+{
+  "_catatan": "Hapus semua baris _catatan* sebelum dipakai. Berkas ini .claude/settings.json di root proyek.",
+
+  "_catatan_permissions": "Allowlist perintah read-only yang sering dipakai supaya tak menanyakan izin berulang. Tambah sesuai stack. JANGAN masukkan perintah yang menulis/menghapus, dan jangan pernah menaruh kredensial di sini.",
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash({{CMD_TEST}})",
+      "Bash({{CMD_FORMAT}})"
+    ],
+    "_catatan_deny": "Menegakkan aturan #1: git dijalankan USER. Aturan di prompt bisa dilupakan model; deny tidak. Hapus blok ini kalau AI memang boleh menjalankan git.",
+    "deny": [
+      "Bash(git push *)",
+      "Bash(git commit *)",
+      "Bash(git merge *)",
+      "Bash(git cherry-pick *)",
+      "Bash(git rebase *)"
+    ]
+  },
+
+  "_catatan_hooks": "Hooks = penegakan; prosa di CLAUDE.md = himbauan. Tiap aturan yang naik jadi hook boleh DIHAPUS dari CLAUDE.md — routernya ikut ramping dan penegakannya justru menguat. Jangan menambah hook yang menyela tiap panggilan tanpa menutup celah nyata; biayanya dibayar di setiap langkah.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          { "type": "command", "command": ".claude/hooks/session-start.py" }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          { "type": "command", "command": ".claude/hooks/secret-scan.py" }
+        ]
+      }
+    ]
+  }
+}

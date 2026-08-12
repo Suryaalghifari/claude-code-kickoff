@@ -1,0 +1,124 @@
+# {{NN}} — Konvensi Koding
+
+Standar penulisan kode untuk proyek ini. **Tingkat: {{TINGKAT}}** ({{ALASAN_TINGKAT}}).
+
+> **Acuan bagi Claude:** ikuti dokumen ini saat menulis kode. Operasi git tetap oleh USER.
+
+<!--
+  Tingkat dinilai saat kickoff dari umur proyek · jumlah pembaca · jumlah bagian · taruhan data.
+  Naik tingkat = tambahkan lapisan berikutnya, jangan tulis ulang dokumen.
+  Ragu antara dua tingkat → ambil yang lebih rendah. Menaikkan itu murah; menurunkan berarti
+  membongkar abstraksi yang terlanjur menyebar.
+-->
+
+---
+
+## Keputusan Gaya (terkunci)
+
+| Aspek | Keputusan |
+|-------|-----------|
+| **Komentar** | **Minimal "WHY".** Hanya saat ada alasan non-obvious. Singkat. Kode menjelaskan dirinya lewat penamaan |
+| **Bahasa kode** | {{BAHASA_KODE}} |
+| **Bahasa komentar** | {{BAHASA_KOMENTAR}} |
+| **Standar** | {{STANDAR_STACK}} |
+
+---
+
+## Prinsip Inti
+
+### Nama = dokumentasi
+Nama menjelaskan **maksud**, bukan tipe.
+
+```
+❌ d, temp, data2, handle(), doStuff()
+✅ publishedAt, activeProjects, publishProject(), calculateReadingTime()
+```
+
+Fungsi = kata kerja. Boolean = `is/has/can`. Koleksi = plural.
+
+### Komentar — hanya "WHY"
+Komentar menjelaskan **KENAPA**, bukan **APA**. Kalau ia cuma menerjemahkan kode, hapus dan
+perbaiki penamaannya.
+
+**Dibenarkan:** keputusan non-obvious · jebakan ("jangan ubah urutan ini karena…") · aturan bisnis
+tak terlihat dari kode · workaround + alasan · regex/algoritma rumit.
+
+**Dilarang:** menerjemahkan kode jelas · penanda obvious (`// constructor`) · komentar usang yang
+tak lagi cocok (lebih buruk dari tanpa komentar).
+
+**TODO:** `// TODO: <apa> (<konteks/kapan>)`
+
+### Komentar berdiri sendiri — tanpa rujukan
+
+**Komentar kode tidak merujuk ke mana pun**: tanpa nomor pasal, tanpa `Lihat docs/...`, tanpa nomor
+tiket. Kalau alasannya penting, **tulis alasannya** — satu kalimat, di tempat ia berlaku.
+
+```
+❌ // Idempotensi ditegakkan UNIQUE di DB (§11.1).
+❌ // Duplikat jadi 'skipped'. Lihat docs/01-data-model.md#idempotensi.
+✅ // Duplikat jadi 'skipped', bukan 500: UNIQUE di DB yang menegakkan, jadi
+   // kirim ulang batch selalu aman.
+```
+
+Rujukan membusuk diam-diam saat dokumen disusun ulang, tak bisa dibaca tanpa membuka berkas lain,
+dan mengunci kode ke satu dokumen master. Dokumen di `docs/` tetap saling menautkan — yang tidak
+boleh adalah kode menautkan ke dokumen.
+
+### Delapan pertanyaan sebelum menulis komentar
+
+Jalankan berurutan, berhenti di jawaban pertama yang cocok.
+
+| # | Pertanyaan | Jawaban |
+|---|---|---|
+| 1 | Bisa dibuat jelas dengan nama variabel/fungsi? | **Jangan komentar** — perbaiki namanya |
+| 2 | Bisa dibuat jelas dengan struktur kode? | **Jangan komentar** — perbaiki strukturnya |
+| 3 | Ada business rule yang tidak obvious? | **Komentar** |
+| 4 | Ada invariant / constraint penting? | **Komentar** |
+| 5 | Ada alasan security / concurrency / performance? | **Komentar** |
+| 6 | Ada workaround yang berpotensi dianggap bug? | **Komentar** |
+| 7 | Cuma menjelaskan "apa yang dilakukan kode"? | **Jangan komentar** |
+| 8 | Menjelaskan "kenapa harus seperti ini"? | **Komentar** |
+
+Pertanyaan 1 dan 2 yang paling sering terlewat: sebagian besar komentar yang terasa perlu
+sebenarnya penanda bahwa penamaan atau strukturnya yang belum benar.
+
+### Fungsi kecil & fokus
+< 20 baris, satu tingkat abstraksi, maks ~3–4 parameter. **Early return** daripada nested if.
+
+### Error handling eksplisit
+Jangan telan error diam-diam. Validasi di batas input — fail fast.
+
+### Lain-lain
+Konfigurasi via env/config, bukan hardcode · tidak ada dead code atau kode ter-komentar
+(git menyimpan riwayat).
+
+{{LAPIS_1}}
+
+{{LAPIS_2}}
+
+---
+
+## {{STACK}}
+
+{{ATURAN_STACK}}
+
+---
+
+## Automasi
+
+Konsistensi dijaga alat, bukan disiplin manual. Perintahnya sama dengan Definition of Done
+([CLAUDE.md](../CLAUDE.md) #8) — satu sumber, jangan didefinisikan dua kali.
+
+| Alat | Fungsi | Kapan jalan |
+|------|--------|-------------|
+{{TABEL_AUTOMASI}}
+
+> Aturan yang bisa ditegakkan alat jangan ditulis sebagai prosa di sini. Prosa itu himbauan;
+> linter itu penegakan. Dokumen ini hanya untuk yang tak bisa dicek mesin — terutama gaya komentar
+> dan pilihan penamaan.
+
+---
+
+## Ringkasan
+
+{{RINGKASAN_PRINSIP}}

@@ -1,0 +1,62 @@
+# SYSTEMMAP — Peta Pengerjaan
+
+Status pengerjaan seluruh pekerjaan. **Sumber kebenaran progres** — sekali lihat, tahu sampai mana.
+
+**Legenda:** ⬜ belum · 🟨 dikerjakan · ✅ selesai · ⏸️ ditunda · 🎯 fokus sekarang
+
+> **Berkas ini status saja.** Tanpa paragraf penalaran, tanpa alasan, tanpa catatan panjang.
+> Alasan → `decisions/` · Riwayat → `SYSTEMMAP-LOG.md`. Harus bisa dipindai dalam **satu menit**.
+
+---
+
+## Protokol Update (WAJIB dibaca Claude)
+
+Saat **satu pekerjaan selesai** — 4 langkah:
+
+1. **Status** di tabel → ✅ (isi Tanggal & Ref), lalu cek dependensi: ada yang jadi terbuka?
+2. **Entri** di paling atas [SYSTEMMAP-LOG.md](SYSTEMMAP-LOG.md) + satu baris di [§Log](#log)
+   (ringkasan ≤105 karakter). Formatnya tersedia sebagai blok siap-salin di header LOG — **salin,
+   jangan diingat**; anchor tautannya rapuh dan putusnya diam-diam
+3. **Utang** yang belum tuntas → [§Utang Terbuka](#utang-terbuka), jangan dikubur di dalam entri
+4. **User yang commit**, bersama kode fiturnya
+
+Sebelum mengerjakan sesuatu yang **besar**: tulis berkas keputusan di `decisions/` lebih dulu.
+
+> **Jangan ✅ sebelum Definition of Done (CLAUDE.md #8) hijau seluruhnya** — jalankan **`/verify`**,
+> termasuk lapis alur nyata. Belum diverifikasi = 🟨, bukan ✅.
+
+---
+
+## Ringkasan Progres
+
+| Fase | Selesai | Total |
+|------|---------|-------|
+| {{FASE_1}} | 0 | {{N}} |
+
+---
+
+## 🎯 Fokus: {{FOKUS}}
+
+<!-- Satu baris saja. Alasannya di decisions/, bukan di sini. -->
+
+---
+
+## {{FASE_1}}
+
+| # | Item | Status | Dependensi | Tanggal | Ref |
+|---|------|--------|-----------|---------|-----|
+| A1 | {{ITEM}} | ⬜ | — | — | — |
+
+---
+
+## Log
+
+| Tanggal | ID | Ringkasan | Detail |
+|---------|-----|-----------|--------|
+
+---
+
+## Utang Terbuka
+
+| Sejak | Apa | Kenapa ditunda |
+|-------|-----|----------------|
