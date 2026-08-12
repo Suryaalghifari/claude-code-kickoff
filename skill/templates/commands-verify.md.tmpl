@@ -12,6 +12,11 @@ Jangan lanjut ke lapis berikutnya membawa kegagalan, dan jangan pernah melaporka
 4. **Build** — `{{CMD_BUILD}}`
 5. **Alur nyata** — {{HOW_E2E}}
 
+> **Alur yang menyentuh DB:** lapis 3 belum selesai hanya karena hijau. Query buruk lolos semua
+> assertion — hasilnya benar, ongkosnya yang salah. Periksa **jumlah query**-nya (assertion, query
+> log, atau `EXPLAIN`); yang dicari pertumbuhannya, bukan angka mutlaknya — naik mengikuti jumlah
+> baris = N+1.
+
 ## Soal lapis 5
 
 Lapis 1–4 membuktikan kode ter-format, konsisten, dan yang diuji lulus. **Tak satu pun membuktikan

@@ -17,7 +17,7 @@ Standar penulisan kode untuk proyek ini. **Tingkat: {{TINGKAT}}** ({{ALASAN_TING
 
 | Aspek | Keputusan |
 |-------|-----------|
-| **Komentar** | **Minimal "WHY".** Hanya saat ada alasan non-obvious. Singkat. Kode menjelaskan dirinya lewat penamaan |
+| **Komentar** | **Default NOL** — komentar & docblock adalah pengecualian yang harus dibenarkan, bukan kelengkapan berkas |
 | **Bahasa kode** | {{BAHASA_KODE}} |
 | **Bahasa komentar** | {{BAHASA_KOMENTAR}} |
 | **Standar** | {{STANDAR_STACK}} |
@@ -36,15 +36,39 @@ Nama menjelaskan **maksud**, bukan tipe.
 
 Fungsi = kata kerja. Boolean = `is/has/can`. Koleksi = plural.
 
-### Komentar — hanya "WHY"
-Komentar menjelaskan **KENAPA**, bukan **APA**. Kalau ia cuma menerjemahkan kode, hapus dan
-perbaiki penamaannya.
+### Satu konsep = satu nama
 
-**Dibenarkan:** keputusan non-obvious · jebakan ("jangan ubah urutan ini karena…") · aturan bisnis
-tak terlihat dari kode · workaround + alasan · regex/algoritma rumit.
+Sinonim lebih merusak daripada nama jelek: nama jelek yang konsisten tetap bisa di-`grep`; dua nama
+untuk satu benda membuat pencarian mengembalikan **separuh** hasil — dan yang mencari tak pernah
+tahu ada separuh lagi.
 
-**Dilarang:** menerjemahkan kode jelas · penanda obvious (`// constructor`) · komentar usang yang
-tak lagi cocok (lebih buruk dari tanpa komentar).
+Berlaku ekstra kalau bahasanya campur. Keputusan bahasa menentukan **bahasa mana**, bukan konsistensi
+konsep — istilah Inggris tetap menyelinap lewat nama framework:
+
+```
+❌ MovementController · ResolveMovement  +  CetakBuktiMutasi   ← satu benda, dua nama
+✅ pilih satu istilah, pakai di kolom DB → model → controller → endpoint → komponen UI
+```
+
+Nama teknis framework (`Controller`, `Request`, `Resource`) boleh tetap Inggris. Yang tak boleh:
+**kata bendanya** ikut berganti bahasa.
+
+### Komentar — default NOL
+
+Komentar adalah pengecualian yang harus dibenarkan, bukan kelengkapan berkas. Satu uji, dan hanya
+ini:
+
+> **Tanpa komentar ini, apakah engineer kompeten akan "merapikan" baris ini dan merusaknya?**
+
+Tidak → **jangan tulis**; perbaiki nama atau strukturnya. Yang lolos uji selalu menyebut akibat:
+
+```
+❌ // Kirim data analytics ke server
+✅ // fetch keepalive, bukan sendBeacon: sendBeacon dibuang diam-diam saat tab ditutup.
+```
+
+**Tiga larangan tanpa pengecualian:** menerjemahkan kode (termasuk penanda `// constructor` dan
+komentar usang) · merujuk ke mana pun (di bawah) · membuka berkas dengan ringkasan isinya (di bawah).
 
 **TODO:** `// TODO: <apa> (<konteks/kapan>)`
 
@@ -64,23 +88,34 @@ Rujukan membusuk diam-diam saat dokumen disusun ulang, tak bisa dibaca tanpa mem
 dan mengunci kode ke satu dokumen master. Dokumen di `docs/` tetap saling menautkan — yang tidak
 boleh adalah kode menautkan ke dokumen.
 
-### Delapan pertanyaan sebelum menulis komentar
+### Docblock tunduk uji yang sama
 
-Jalankan berurutan, berhenti di jawaban pertama yang cocok.
+Titik buta paling mahal: aturan komentar terbaca sebagai aturan untuk `//` saja, sehingga docblock
+lolos dari semuanya dan ditulis sebagai kelengkapan berkas. **Header berkas adalah ongkos tetap** —
+±13 baris entah berkasnya 21 baris atau 400 — jadi ia paling membebani justru di berkas terkecil.
 
-| # | Pertanyaan | Jawaban |
-|---|---|---|
-| 1 | Bisa dibuat jelas dengan nama variabel/fungsi? | **Jangan komentar** — perbaiki namanya |
-| 2 | Bisa dibuat jelas dengan struktur kode? | **Jangan komentar** — perbaiki strukturnya |
-| 3 | Ada business rule yang tidak obvious? | **Komentar** |
-| 4 | Ada invariant / constraint penting? | **Komentar** |
-| 5 | Ada alasan security / concurrency / performance? | **Komentar** |
-| 6 | Ada workaround yang berpotensi dianggap bug? | **Komentar** |
-| 7 | Cuma menjelaskan "apa yang dilakukan kode"? | **Jangan komentar** |
-| 8 | Menjelaskan "kenapa harus seperti ini"? | **Komentar** |
+```
+❌ /**
+    * BaseBadge — badge dengan variant warna.
+    * variant:
+    *   success → bg-success              ← pemetaan yang sama ada 10 baris di bawahnya
+    *   warning → bg-warning
+    */
+```
 
-Pertanyaan 1 dan 2 yang paling sering terlewat: sebagian besar komentar yang terasa perlu
-sebenarnya penanda bahwa penamaan atau strukturnya yang belum benar.
+Header semacam itu **salinan kedua dari kode di berkas yang sama**: ubah satu kelas CSS, ia langsung
+berbohong tanpa satu pun test gagal. Berlaku hukum yang sama dengan perintah kembar di `CLAUDE.md` —
+dua salinan pasti berbeda suatu hari, dan yang basi selalu yang lebih mudah dibaca.
+
+**Docblock dibenarkan hanya untuk yang tak terbaca dari signature:** satuan (`ms`? `detik`?) · efek
+samping · invarian pemanggilan ("harus dipanggil setelah X") · jebakan perilaku framework.
+
+**Tidak pernah:** meringkas isi berkas · mendaftar ulang props/varian/komposisi · mengulang nama
+berkas · `@param`/`@return` yang cuma menyalin tipe yang sudah tertulis.
+
+> Satu berkas boleh punya dua-duanya. Header 13 baris yang 11 barisnya menyalin `<template>`,
+> sementara 2 baris terakhirnya menjelaskan perilaku framework yang memang tak terbaca dari kode →
+> **buang 11, simpan 2.** Jangan buang seluruhnya, jangan pertahankan seluruhnya.
 
 ### Fungsi kecil & fokus
 < 20 baris, satu tingkat abstraksi, maks ~3–4 parameter. **Early return** daripada nested if.

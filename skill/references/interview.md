@@ -54,11 +54,21 @@ Ronde paling menentukan. Jawabannya langsung jadi doc set.
 Untuk tiap dimensi mahal dari Ronde 2, pancing keputusannya sampai final.
 
 1. Bahasa/runtime, framework, penyimpanan data, autentikasi — sejauh yang relevan saja.
-2. Untuk tiap keputusan, **wajib ada alasan sebaris**. Keputusan tanpa alasan akan dibongkar ulang
+2. **Bentuk repo** — satu folder untuk semua · satu repo banyak bagian (berbagi tooling) · repo
+   terpisah per bagian. *(Ambil yang paling kecil yang cukup: memecah belakangan itu pekerjaan
+   tersendiri, tapi menggabung lebih murah daripada memecah.)* Ini **paling mahal diubah** dari
+   seluruh tabel — mengganti ORM itu sakit, memecah repo di bulan ketiga itu proyek baru.
+3. **Akses data** — ORM · query builder · SQL mentah, **dan di mana query boleh tinggal**
+   (model/repository saja, atau bebas di handler?). Batas "di mana" ini yang menentukan apakah
+   query buruk bisa ditemukan belakangan; tanpanya ia tersebar dan tak ada yang bisa mengauditnya.
+4. Untuk tiap keputusan, **wajib ada alasan sebaris**. Keputusan tanpa alasan akan dibongkar ulang
    tiga minggu lagi, dan itu persis yang mau dicegah.
-3. Kalau user ragu: sodorkan rekomendasi + trade-off, jangan lempar balik pertanyaan mentah.
-4. Kalau memang belum bisa diputuskan, tandai `[BELUM]` — **jangan** ditebak. Keputusan palsu lebih
+5. Kalau user ragu: sodorkan rekomendasi + trade-off, jangan lempar balik pertanyaan mentah.
+6. Kalau memang belum bisa diputuskan, tandai `[BELUM]` — **jangan** ditebak. Keputusan palsu lebih
    berbahaya dari keputusan yang tertunda.
+
+> Poin 2 & 3 ditanyakan **sekali**, lalu jadi baris keputusan terkunci. Jangan berubah jadi diskusi
+> struktur folder ideal — bentuk yang benar mengikuti jawaban poin 2, bukan sebaliknya.
 
 **Keluaran:** tabel `| Aspek | Keputusan | Alasan |` siap tempel ke `CLAUDE.md`.
 

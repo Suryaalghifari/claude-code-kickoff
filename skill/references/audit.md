@@ -72,7 +72,7 @@ Keputusan terkunci di proyek existing sudah ada, cuma tak tertulis. Baca dari:
 | Konfigurasi DB / migrasi | penyimpanan data & bentuknya |
 | Berkas auth / middleware | mekanisme autentikasi |
 | CI workflow | perintah lint/test/build **nyata** — langsung jadi DoD |
-| `.env.example` | layanan eksternal yang dipakai |
+| `.env.example` | layanan eksternal yang dipakai, dan apa yang harus hidup agar ia jalan |
 
 Lalu **konfirmasi, jangan menyimpulkan sendiri**:
 
@@ -85,6 +85,45 @@ berbahaya daripada kolom kosong, karena ia akan dipercaya enam bulan lagi.
 > **Kalau repo pernah punya dokumen yang kini terhapus** (`git log --diff-filter=D -- '*.md'`):
 > jangan diam-diam memulihkan isinya. Penghapusan bisa disengaja — dokumen usang yang menyesatkan,
 > atau memang dibuang. **Tanyakan dulu**: mau dipakai sebagai bahan, atau diabaikan?
+
+### Realitas deploy — di sini dibaca, bukan ditunda
+
+`doc-rubric.md` melarang menulis dokumen deployment **di depan**, dan itu benar untuk `/kickoff`:
+di hari pertama cara deploy masih tebakan. **Larangan itu soal meramal, bukan soal membaca.** Di
+proyek yang sudah jalan, cara deploy sudah tertulis — sekelas dengan manifest dan migrasi di tabel
+atas. Jangan bawa larangan "tunda" ke mode di mana pembenarannya tidak berlaku.
+
+```bash
+ls .github/workflows/ .gitlab-ci.yml Dockerfile* docker-compose* Procfile fly.toml 2>/dev/null
+ls deploy* scripts/deploy* Makefile 2>/dev/null
+```
+
+| Sumber | Yang terbaca |
+|---|---|
+| Job **deploy** di CI (berkas yang sama dengan DoD) | ke mana ia naik, dipicu apa, environment apa saja |
+| `Dockerfile` / `compose` / `Procfile` | bagaimana ia dijalankan, proses apa saja yang harus hidup |
+| Skrip deploy / `Makefile` | langkah rilis nyata, termasuk migrasi |
+| Konfigurasi webserver / reverse proxy | pintu masuk trafik, berkas statis, TLS |
+| Nama secret di CI (**namanya saja**) | ketergantungan eksternal yang tak terlihat di kode |
+
+> Berkas CI **sudah kamu buka** untuk memanen perintah lint/test/build. Job deploy ada di berkas
+> itu juga — memanen separuh lalu membuang sisanya adalah kehilangan yang tak perlu.
+
+Lima pertanyaan yang harus terjawab, dan **berhenti di situ**: di mana ia jalan · bagaimana ia
+sampai ke sana · environment apa saja & bedanya · apa yang pertama rusak · bagaimana kembali ke
+versi sebelumnya. Ukurannya ikut pola `0X-security.md` — **peta jalan ke produksi, bukan manual
+ops.** Yang tumbuh belakangan dari kejadian nyata, bukan ditulis lengkap sekarang.
+
+**Aturan yang mengikat bagian ini:**
+
+- **Turunkan lalu konfirmasi.** Yang tak bisa dipastikan → `[BELUM]`. Berlaku ekstra di sini:
+  langkah manual yang hidup di kepala orang **tak akan pernah** muncul di CI, dan justru itu yang
+  paling sering jadi penyebab rilis gagal.
+- **Isi yang tak terverifikasi lebih buruk daripada tak ada dokumen** — alasannya sama persis
+  dengan peta kode basi di §A1: ia terlihat berwibawa. Tandai apa adanya mana yang dibaca dari
+  berkas dan mana yang dikonfirmasi user.
+- **Jangan menyentuh CI, secret, atau konfigurasi deploy.** Ini membaca, bukan merapikan (lihat
+  §Batas yang harus dihormati).
 
 ---
 
@@ -150,6 +189,8 @@ Sajikan sebagai tabel, terurut dampak:
 | Keputusan besar | tak terekam | buat `docs/decisions/` |
 | Aturan dari kegagalan | 3 klaster fix belum jadi aturan | usulkan #9–#11 |
 | DoD | ada di CI, tak ada di `CLAUDE.md` | salin perintah nyatanya |
+| **Cara deploy** | **hidup di CI/Dockerfile, tak terekam** | **`0X-deployment.md` — lima pertanyaan §A2** |
+| **Arsitektur** | **hanya terbaca dari kode** | **`0X-architecture.md` ringkas; kesimpulannya naik ke `CLAUDE.md`** |
 | Dokumen tanpa pemicu | `docs/x.md` nol rujukan | masukkan router atau hapus |
 | Peta graphify tercampur | ada node `document` | rebuild `--code-only` + `.graphifyignore` (§A1) |
 

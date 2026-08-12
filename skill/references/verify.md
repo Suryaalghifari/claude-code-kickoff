@@ -8,21 +8,40 @@ jalur browser sungguhan. Tidak ada suite yang bisa menangkap itu — hanya membu
 
 ---
 
-## Empat lapis, dan yang keempat yang menentukan
+## Lima lapis, dan yang kelima yang menentukan
 
 | Lapis | Membuktikan | Tidak membuktikan |
 |---|---|---|
-| Formatter | kode ter-format | apa pun soal perilaku |
-| Static analysis | tipe & bug statis konsisten | perilaku saat jalan |
-| Test | yang diuji lulus | yang tak diuji |
-| **Alur nyata** | **fiturnya jalan untuk pemakai** | — |
+| 1 · Formatter | kode ter-format | apa pun soal perilaku |
+| 2 · Static analysis | tipe & bug statis konsisten | perilaku saat jalan |
+| 3 · Test | yang diuji lulus | yang tak diuji |
+| 4 · Build | artefaknya jadi | artefaknya benar |
+| **5 · Alur nyata** | **fiturnya jalan untuk pemakai** | — |
 
-Tiga lapis pertama otomatis dan murah. **Lapis keempat yang paling sering dilewat, dan satu-satunya
+Empat lapis pertama otomatis dan murah. **Lapis kelima yang paling sering dilewat, dan satu-satunya
 yang menangkap kegagalan diam.**
+
+### Lapis 3 & database: hitung query-nya, jangan cuma "hijau"
+
+Query buruk **lolos seluruh test fungsional** — hasilnya benar, yang salah ongkosnya. N+1 tak pernah
+membuat assertion gagal; ia cuma membuat halaman lambat tiga bulan lagi saat barisnya jadi ribuan.
+
+Karena itu, untuk alur yang menyentuh DB, lapis 3 memverifikasi **jumlah query**, bukan cuma hasil:
+
+- Ada mekanismenya di stack (assertion jumlah query, query log, `EXPLAIN`) → pasang di test alur itu.
+- Tidak ada → minimal **jalankan alurnya sekali dengan query log menyala dan baca angkanya.** Sekali
+  lihat sudah cukup menangkap N+1.
+
+Yang dicari bukan angka mutlak, tapi **pertumbuhannya**: jumlah query yang naik mengikuti jumlah
+baris data = N+1, apa pun angkanya. Uji dengan 1 baris lalu 10 — kalau ikut naik, itu temuannya.
+
+> Ini sengaja **gerbang, bukan bab**. Cara mengoptimasi query bukan pengetahuan yang kurang — yang
+> kurang adalah sesuatu yang menangkapnya sebelum ia sampai produksi. Menambahkan teori ke dokumen
+> tak menangkap apa pun; satu angka yang dibaca menangkapnya.
 
 ---
 
-## Bentuk nyata lapis keempat
+## Bentuk nyata lapis kelima
 
 | Jenis proyek | Verifikasi yang sah | Yang **tidak** cukup |
 |---|---|---|

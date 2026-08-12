@@ -37,7 +37,8 @@ lalu ketik:
 ```
 /kickoff              # proyek baru (folder boleh kosong)
 /kickoff --resume     # lanjutkan wawancara yang tertunda
-/kickoff --audit      # proyek sudah jalan: baca yang ada, tambal yang kurang
+/kickoff --audit      # proyek sudah jalan, BELUM punya sistem konteks
+/kickoff --sync       # proyek SUDAH punya, tapi lahir dari skill versi lama
 ```
 
 Setelah kickoff, proyek dapat dua perintah sendiri:
@@ -154,6 +155,25 @@ sudah memuat aturannya sebelum siapa pun menuliskannya.
 > Aturan mutlak mode ini: **jangan timpa apa pun.** Berkas yang sudah ada hanya diubah setelah
 > perubahannya ditunjukkan dan disetujui, satu per satu.
 
+## Kalau skillnya sendiri berubah: `--sync`
+
+Proyek hasil `/kickoff` memegang **salinan** `templates/`. Memperbaiki skill lalu `./install.sh`
+**tidak** menyentuh salinan itu — jadi proyek lama tetap membaca aturan yang sudah dicabut, tiap
+sesi, tanpa ada yang menyadarinya. Gejalanya khas: *"aturannya sudah saya perbaiki, tapi kok masih
+dilanggar terus."*
+
+`--sync` bekerja dari **tabel penanda aturan mati** (`references/sync.md` §S2) — bukan mendiff
+seluruh berkas. Tiap aturan yang dicabut mewariskan satu penanda yang bisa di-`grep` di proyek
+lama, beserta berkas mana yang harus disunting.
+
+| | `--audit` | `--sync` |
+|---|---|---|
+| Untuk | belum punya sistem konteks | sudah punya, tapi versi lama |
+| Membaca | kode proyek | artefak generate vs templat sekarang |
+
+> Batas terpentingnya: **`--sync` tidak menyentuh kode.** Aturan komentar yang berubah tidak berarti
+> membersihkan komentar lama secara massal — aturan baru berlaku untuk yang ditulis sesudahnya.
+
 ## Melawan pembusukan
 
 Sistem konteks tak rusak mendadak; ia menggemuk sampai tak ada yang membacanya. Ambang di
@@ -226,7 +246,7 @@ dikoreksi. User tak perlu menilai kompleksitas proyeknya sendiri.
 
 | Tingkat | Yang dipasang |
 |---|---|
-| **Ringan** | Lapis 0 — nama = dokumentasi · komentar "why" saja · fungsi kecil & early return · error eksplisit · tanpa hardcode |
+| **Ringan** | Lapis 0 — nama = dokumentasi · satu konsep satu nama · komentar & docblock default nol · fungsi kecil & early return · error eksplisit · tanpa hardcode |
 | **Sedang** | + Lapis 1 — formatter & linter otomatis · DRY rule-of-three · penamaan formal · type everything |
 | **Berat** | + Lapis 2 — struktur berlapis · validasi terpisah · Resource/DTO · enum status · SOLID · gate CI |
 
@@ -267,7 +287,8 @@ skill/
 │   ├── rules.md              pagar 3 baris + aturan-dari-kegagalan + DoD
 │   ├── workflow.md           alur satu pekerjaan; tambah vs revisi
 │   ├── verify.md             lima lapis verifikasi + blok bukti
-│   ├── audit.md              alur proyek existing
+│   ├── audit.md              alur proyek existing tanpa sistem konteks
+│   ├── sync.md               menyamakan proyek lama dengan templat sekarang
 │   └── maintenance.md        ambang pembusukan, rotasi LOG, hook
 └── templates/                rangka berkas + hooks yang disalin ke proyek
 install.sh
@@ -281,7 +302,7 @@ Mengubah skill = edit di `skill/`, lalu `./install.sh` lagi.
 
 ## Catatan
 
-- Repo ini **belum di-`git init`** — sengaja, git dijalankan user. Kalau mau diversikan:
-  `git init && git add . && git commit -m "feat: skill kickoff"`
+- Semua perintah git di repo ini **dijalankan user, bukan AI** — sama seperti aturan yang dipasang
+  skill ini ke proyek yang dilayaninya.
 - Angka & contoh yang dikutip di sini berasal dari satu proyek nyata (369 commit, 15 dokumen,
   ~1 bulan). Bukan angka industri — perlakukan sebagai satu titik data, bukan hukum.

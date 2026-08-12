@@ -55,6 +55,10 @@ Dari daftar mahal-diubah (Ronde 2) ke dokumen:
 Spesifikasi endpoint lengkap · panduan per-halaman/per-modul · deployment · panduan kontribusi ·
 changelog · roadmap panjang di luar `SYSTEMMAP`.
 
+> **Lingkupnya: proyek baru.** Semua larangan di berkas ini menolak **tebakan**, bukan menolak
+> topiknya. Di `--audit`, cara deploy sudah tertulis di CI/Dockerfile — di sana ia **dibaca**, dan
+> larangan ini tidak berlaku. Lihat `audit.md` §A2 "Realitas deploy".
+
 ---
 
 ## Pagar ukuran
