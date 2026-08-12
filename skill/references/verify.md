@@ -109,6 +109,35 @@ tak ada — dan itu lebih berbahaya daripada tak punya peta, karena terlihat ber
 Proyek **tidak** memakai graphify → **hapus seluruh section 6**, jangan tinggalkan placeholder.
 Jangan pula memasang graphify hanya karena template menyebutnya.
 
+## Menguji hook — dua jebakan yang sudah memakan korban
+
+Hook rusak **gagal diam-diam**, jadi ia wajib diuji dua arah. Tapi cara mengujinya sendiri punya
+dua jebakan, keduanya ditemukan di pemakaian nyata:
+
+**1. Uji terhadap berkas yang BENAR-BENAR dihasilkan, bukan buatan tangan.**
+
+```bash
+# ❌ bikin SYSTEMMAP contoh sendiri, lalu uji → lolos, padahal templatnya bermasalah
+# ✅ hasilkan dari templatnya dulu, baru uji
+sed -e 's/{{FOKUS}}/x/' -e 's/{{FASE_1}}/Fase 1/' templates/SYSTEMMAP.md.tmpl > docs/SYSTEMMAP.md
+python3 .claude/hooks/session-start.py
+```
+
+Kasus nyatanya: `session-start.py` diuji terhadap SYSTEMMAP buatan tangan dan lolos. Pada berkas
+hasil templat ia **selalu** memancarkan peringatan "ada pekerjaan belum ditutup" — contoh checkpoint
+di dalam `<!-- ... -->` terbaca sebagai data, dan pemisah `---` ikut lolos filter. Tiap proyek baru
+lahir dengan alarm palsu permanen. **Peringatan yang selalu muncul adalah peringatan yang berhenti
+dibaca** — dan yang dilemahkannya justru satu-satunya mekanisme penjaga pekerjaan terputus.
+
+Pelajaran umumnya: **hook membaca berkas nyata, jadi ujinya harus memakai berkas nyata.** Berkas
+contoh yang kamu tulis sendiri diam-diam menghindari persis kasus yang bikin hook itu ada.
+
+**2. Kasus uji perintah tinggal di berkas, jangan di baris perintah.**
+
+`destructive-guard.py` membaca **seluruh string perintah**. Menguji lewat Bash yang memuat
+`migrate:fresh` sebagai data uji membuat hook memblokir skrip ujinya sendiri. Itu bukti ia hidup,
+tapi ujinya tak jadi jalan. Taruh kasusnya di berkas terpisah lalu suapkan lewat stdin.
+
 ## Keluaran: blok bukti siap tempel
 
 Setelah lima lapis hijau, hasilkan ini untuk `SYSTEMMAP-LOG.md`:

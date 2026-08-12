@@ -130,7 +130,8 @@ Periksa sendiri sebelum lapor:
   ```
 - [ ] Perintah DoD **hanya di `.claude/commands/verify.md`**; `CLAUDE.md` #8 cuma menunjuk ke sana
 - [ ] **Tiap hook `chmod +x` dan diuji dua arah** — yang seharusnya lolos *dan* yang seharusnya
-      diblokir. Hook rusak gagal diam-diam: terpasang, terlihat wajar, tak menghalangi apa pun
+      diblokir, **terhadap berkas hasil templat, bukan buatan tangan**. Dua jebakan yang sudah
+      memakan korban: `references/verify.md` §Menguji hook
 - [ ] Aturan 9+ kosong · `.kickoff-wawancara.md` sudah dihapus
 
 Lalu laporkan: apa yang dibuat, apa yang **sengaja tidak** dibuat + alasannya, dan sarankan perintah
@@ -165,10 +166,11 @@ Sebutkan juga:
 | **Belum** — arah proyek cuma tertulis di kode | `--audit` | inventaris → turunkan keputusan dari kode → **gali kandidat aturan dari `git log`** → backfill SYSTEMMAP → laporkan celah. `references/audit.md` |
 | **Sudah**, tapi lahir dari skill versi lama | `--sync` | cari penanda aturan mati (§S2) → hormati batasnya → laporkan per seberapa sering dibaca → tutup dengan entri `#SYNC`. `references/sync.md` |
 
-Dua batas yang berlaku di **kedua** mode:
+Tiga batas yang berlaku di **kedua** mode:
 
-- **Jangan timpa apa pun.** Berkas yang sudah ada hanya diubah setelah perubahannya ditunjukkan dan
-  disetujui, satu per satu.
+- **Laporkan lalu BERHENTI.** Menyajikan tabel temuan **bukan** izin untuk mulai menulis. Tunggu
+  user menjawab, lalu kerjakan hanya yang disetujui — satu per satu, bukan sepaket.
+- **Jangan timpa apa pun.** Berkas yang sudah ada hanya diubah setelah diff-nya ditunjukkan.
 - **Jangan membersihkan kode.** Aturan yang berubah berlaku untuk yang ditulis **sesudahnya**.
 
 ## Perawatan berkala

@@ -29,8 +29,24 @@ printf '%s' '{"tool_input":{"file_path":"a.php","content":"$k = config(\"app.key
 printf '%s' 'bukan json' | ./skill/templates/hooks/secret-scan.py; echo "harus 0 → $?"
 ```
 
-`session-start.py` diuji dari folder proyek ber-`docs/SYSTEMMAP.md`; dari folder tanpa itu ia harus
-**diam** dan keluar 0.
+`session-start.py` — **uji terhadap berkas hasil templat, jangan buatan tangan.** SYSTEMMAP contoh
+yang ditulis sendiri diam-diam menghindari persis kasus yang bikin hooknya ada; bug alarm palsu
+lolos dari uji dengan cara itu, dan baru ketahuan di proyek nyata.
+
+```bash
+d=$(mktemp -d)/docs && mkdir -p "$d"
+sed -e 's/{{FOKUS}}/x/' -e 's/{{FASE_1}}/Fase 1/' -e 's/{{N}}/1/' -e 's/{{ITEM}}/setup/' \
+  skill/templates/SYSTEMMAP.md.tmpl > "$d/SYSTEMMAP.md"
+cd "$(dirname "$d")" && python3 - <<'EOF'
+import subprocess, sys
+out = subprocess.run([sys.argv[0] if False else "python3",
+    "/home/uyasky/Projects/claude-kickoff/skill/templates/hooks/session-start.py"],
+    capture_output=True, text=True).stdout
+print("⚠️ palsu:", out.count("⚠️"), "(harus 0 — §Sedang Berjalan masih kosong)")
+EOF
+```
+
+Dari folder tanpa `docs/SYSTEMMAP.md` ia harus **diam** dan keluar 0.
 
 `destructive-guard.py` — arah "lolos" yang lebih penting di sini: hook yang memblokir kerja
 sehari-hari akan dimatikan orang, dan begitu dimatikan ia tak melindungi apa pun.
@@ -55,8 +71,16 @@ g 'git push --force-with-lease o b'    'harus 0'
 disertai cara mengisinya.
 
 ```bash
-grep -rn '{{' skill/references/     # tiap temuan harus punya section "Mengisi ..."
+grep -rn '{{' skill/references/
 ```
+
+Temuan **sah** kalau ia berupa: judul `### Mengisi {{X}} di …`, rujukan ke placeholder yang sudah
+dijelaskan, contoh perintah yang justru **sedang mengisinya** (`sed 's/{{X}}/…/'`), atau kalimat
+tentang placeholder secara umum. **Pelanggaran** hanya kalau `{{X}}` muncul sebagai isi yang
+seakan-akan menunggu diisi, tanpa penjelasan cara mengisinya.
+
+> Jangan ubah ini jadi "harus nol temuan". Cek yang selalu merah berhenti dibaca — dan yang hilang
+> bukan cuma ceknya, tapi kepercayaan pada lapis di sekitarnya.
 
 ## 4. Router sinkron
 

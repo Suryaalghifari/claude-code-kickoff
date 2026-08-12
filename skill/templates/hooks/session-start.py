@@ -20,6 +20,15 @@ MAP = Path("docs/SYSTEMMAP.md")
 MAX_ROWS = 5
 MAX_WIDTH = 140
 
+# Komentar HTML berisi panduan & CONTOH isian, bukan data. Tanpa membuangnya, contoh checkpoint di
+# dalam <!-- ... --> terbaca sebagai checkpoint sungguhan dan tiap sesi dibuka peringatan palsu.
+COMMENT = re.compile(r"<!--.*?-->", re.S)
+
+# Komentar yang lupa ditutup: sisanya berkas ikut terbuang — dan §Utang bisa lenyap TANPA SUARA.
+# Diukur: satu `<!--` tak ditutup sebelum §Utang membuatnya hilang dari keluaran. Berkas status yang
+# diam lebih berbahaya daripada berkas status yang cerewet, jadi ini diberi suara.
+UNCLOSED = re.compile(r"<!--(?!.*?-->).*\Z", re.S)
+
 
 def clip(text: str) -> str:
     text = text.strip()
@@ -53,7 +62,15 @@ def main() -> int:
     if not MAP.exists():
         return 0
 
-    lines = MAP.read_text(encoding="utf-8").splitlines()
+    raw = COMMENT.sub("", MAP.read_text(encoding="utf-8"))
+    warn = ""
+    if UNCLOSED.search(raw):
+        warn = (
+            f"\n\n> ⚠️ `{MAP}` punya `<!--` yang tak ditutup — isi sesudahnya tak terbaca "
+            "di sini. Tutup komentarnya supaya status tak hilang diam-diam."
+        )
+        raw = UNCLOSED.sub("", raw)
+    lines = raw.splitlines()
     parts: list[str] = []
 
     # Fokus — satu baris, sesuai protokol
@@ -62,10 +79,12 @@ def main() -> int:
 
     # Sedang berjalan — checkpoint pekerjaan yang terputus. Paling atas: sesi yang mati di
     # tengah kerja meninggalkan ini, dan mengulanginya bisa merusak (migrasi, data, berkas).
+    # `"- "` (dengan spasi), BUKAN `"-"`: tanpa spasi, pemisah `---` dan penutup `-->` ikut
+    # terbaca sebagai butir checkpoint.
     running = [
         clip(l)
         for l in section(lines, r"sedang berjalan")
-        if l.strip().startswith("-")
+        if l.strip().startswith("- ")
     ]
     if running:
         parts.append(
@@ -92,7 +111,7 @@ def main() -> int:
 
     print(f"## Status proyek (dari {MAP})\n")
     print("\n".join(parts))
-    print("\n> Belum diverifikasi end-to-end = 🟨, bukan ✅.")
+    print("\n> Belum diverifikasi end-to-end = 🟨, bukan ✅." + warn)
     return 0
 
 
