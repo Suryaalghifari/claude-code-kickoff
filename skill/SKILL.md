@@ -17,7 +17,8 @@ dipikirkan tetap dipikirkan.
 ```
 /kickoff              # di folder proyek baru (boleh kosong)
 /kickoff --resume     # lanjutkan wawancara yang tertunda
-/kickoff --audit      # proyek sudah jalan: periksa yang kurang, jangan timpa yang ada
+/kickoff --audit      # proyek sudah jalan, BELUM punya sistem konteks
+/kickoff --sync       # proyek SUDAH punya sistem konteks, tapi lahir dari skill versi lama
 ```
 
 ---
@@ -33,7 +34,7 @@ mati — mode kegagalan paling umum dari sistem semacam ini.
    keputusan harus keluar.
 3. **Tidak ada dokumen tanpa baris di tabel routing.** Dokumen yang tak punya pemicu tak pernah
    dibuka — jangan dibuat.
-4. **Aturan bernomor 8 ke atas dimulai KOSONG.** Ia hanya boleh lahir dari kegagalan nyata yang
+4. **Aturan bernomor 9 ke atas dimulai KOSONG.** Ia hanya boleh lahir dari kegagalan nyata yang
    sudah terjadi (lihat `references/rules.md`). Jangan mengarang aturan antisipatif.
 5. **Doc set dipilih lewat rubrik, tidak disalin.** Rubriknya: apa yang mahal diubah belakangan
    (lihat `references/doc-rubric.md`).
@@ -77,7 +78,7 @@ placeholder mentah.
 
 | Berkas | Sumber | Catatan |
 |---|---|---|
-| `CLAUDE.md` | `CLAUDE.md.tmpl` | ≤200 baris. Aturan 8+ kosong |
+| `CLAUDE.md` | `CLAUDE.md.tmpl` | ≤200 baris. Aturan 1–8 terisi, 9+ kosong |
 | `docs/README.md` | `docs-README.md.tmpl` | Index + konvensi dokumen |
 | `docs/<terpilih>.md` | — | Ditulis dari hasil wawancara, bukan template |
 | `docs/SYSTEMMAP.md` | `SYSTEMMAP.md.tmpl` | **Status saja** — tanpa prosa |
@@ -115,8 +116,14 @@ Periksa sendiri sebelum lapor:
 - [ ] `CLAUDE.md` ≤200 baris, nol `{{PLACEHOLDER}}` tersisa
 - [ ] Tiap dokumen di `docs/` punya baris di tabel routing — dan sebaliknya
 - [ ] `SYSTEMMAP.md` tak memuat paragraf penalaran
-- [ ] Tiap aturan bernomor **≤3 baris** — **hitung, jangan taksir**:
-      `awk '/^[0-9]+\./{if(n)print n": "c; n=$1; c=1; next} n&&/^ /{c++} END{print n": "c}' CLAUDE.md`
+- [ ] Tiap aturan bernomor **≤3 baris** — **hitung, jangan taksir**. `sed` mengurung hitungan ke
+      blok aturan saja; tanpa itu komentar "aturan 9+" yang ber-indentasi ikut terhitung sebagai
+      sambungan aturan #8, dan kamu akan "memperbaiki" aturan yang tak rusak:
+
+  ```bash
+  sed -n '/^## Aturan kerja WAJIB/,/^\(<!--\|## \)/p' CLAUDE.md \
+    | awk '/^[0-9]+\./{if(n)print n" "c; n=$1; c=1; next} n&&/^ /{c++} END{if(n)print n" "c}'
+  ```
 - [ ] Perintah DoD **hanya di `.claude/commands/verify.md`**. `CLAUDE.md` #8 cuma menunjuk ke sana —
       jangan menyalin daftar perintahnya (dua salinan pasti berbeda suatu hari)
 - [ ] Hook `chmod +x` **dan benar-benar diuji** — beri masukan yang seharusnya lolos *dan* yang
@@ -162,6 +169,20 @@ backfill SYSTEMMAP → laporkan celah → kerjakan hanya yang disetujui.
 **Jangan timpa apa pun.** Berkas yang sudah ada hanya diubah setelah perubahannya ditunjukkan dan
 disetujui, satu per satu.
 
+## Mode `--sync` (proyek dari skill versi lama)
+
+Proyek hasil `/kickoff` memegang **salinan** `templates/`. Saat skill diperbaiki, salinan itu tidak
+ikut berubah — jadi proyek lama tetap membaca aturan yang sudah dicabut, tiap sesi. Ikuti
+`references/sync.md`.
+
+Ringkasnya: pastikan modenya tepat → cari penanda aturan mati (tabel §S2) → hormati batasnya →
+laporkan berdasar seberapa sering berkasnya dibaca, kerjakan yang disetujui, tutup dengan entri
+`#SYNC`.
+
+> **Jangan tertukar dengan `--audit`.** `--audit` untuk proyek yang **belum** punya sistem konteks
+> dan menurunkannya dari kode. `--sync` untuk yang **sudah** punya, membandingkannya dengan templat
+> sekarang. **Jangan membersihkan kode** — aturan baru berlaku untuk yang ditulis sesudahnya.
+
 ## Perawatan berkala
 
 Diminta merapikan sistem yang sudah berjalan, atau saat `--audit` menemukan pembusukan → ikuti
@@ -179,5 +200,6 @@ Diminta merapikan sistem yang sudah berjalan, atau saat `--audit` menemukan pemb
 | `references/rules.md` | Pagar 3 baris + aturan-dari-kegagalan + DoD | Fase 3 & 5 |
 | `references/workflow.md` | Alur satu pekerjaan; tambah vs revisi | Fase 3, saat mengisi `/work` |
 | `references/verify.md` | Lima lapis verifikasi + blok bukti | Fase 3, saat mengisi `/verify` |
-| `references/audit.md` | Alur proyek existing | `--audit` |
+| `references/audit.md` | Alur proyek existing tanpa sistem konteks | `--audit` |
+| `references/sync.md` | Menyamakan proyek lama dengan templat sekarang | `--sync` |
 | `references/maintenance.md` | Ambang pembusukan, rotasi LOG, hook | `--audit` & perawatan |

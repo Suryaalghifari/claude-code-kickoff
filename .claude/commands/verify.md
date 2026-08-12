@@ -51,7 +51,33 @@ for f in skill/references/*.md; do
 done
 ```
 
-## 5. Alur nyata — yang paling menentukan
+## 5. Pasangan `references/` ↔ `templates/`
+
+Aturan #9 lahir dari sini, dua kali: aturan diperbaiki di `references/`, templat yang menyalinnya
+dibiarkan basi. Yang sampai ke proyek pengguna adalah `templates/` — jadi perbaikan yang berhenti
+di `references/` **tidak pernah berlaku**, dan gejalanya muncul sebagai "aturannya ada tapi
+dilanggar terus".
+
+```bash
+# aturan lama yang seharusnya sudah mati — harus nol temuan di KEDUA folder.
+# sync.md DIKECUALIKAN: ia justru menyimpan penanda itu sebagai data (tabel §S2).
+grep -rn 'Delapan pertanyaan\|hanya "WHY"\|non-obvious' skill/ --exclude=sync.md
+
+# aturan yang baru dicabut wajib punya barisnya di tabel penanda —
+# tanpa itu `--sync` buta, dan proyek lama memegang aturan mati selamanya
+grep -c '^|' skill/references/sync.md
+
+# pasangan yang wajib sejalan bila salah satunya disentuh
+#   references/conventions.md  ↔  templates/conventions.md.tmpl
+#   references/workflow.md     ↔  templates/commands-work.md.tmpl + CLAUDE.md.tmpl §Alur
+#   references/verify.md       ↔  templates/commands-verify.md.tmpl
+#   references/git.md          ↔  templates/git-workflow.md.tmpl
+```
+
+Yang diperiksa bukan kesamaan kata per kata — `templates/` memang lebih ringkas. Yang diperiksa:
+**tak ada aturan di satu sisi yang sudah dicabut di sisi lain.**
+
+## 6. Alur nyata — yang paling menentukan
 
 Empat langkah di atas membuktikan berkasnya utuh. **Tak satu pun membuktikan skillnya bekerja.**
 

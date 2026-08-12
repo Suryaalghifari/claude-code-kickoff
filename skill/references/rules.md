@@ -1,6 +1,10 @@
 # Aturan yang Tumbuh & Definition of Done
 
-## Kenapa aturan 8+ dimulai kosong
+## Kenapa aturan 9+ dimulai kosong
+
+Aturan #1–#8 memang dikirim terisi — itu pagar dasar yang berlaku di proyek apa pun (git, konvensi,
+SYSTEMMAP, DoD). Yang dimulai kosong adalah **#9 ke atas**: slot untuk aturan yang hanya kamu yang
+bisa menemukannya.
 
 Di proyek rujukan, tiga aturan yang paling banyak menyelamatkan pekerjaan **tak satu pun ada di
 dokumen awal**. Semuanya masuk pada hari ke-2 dan ke-5, setelah gagal:

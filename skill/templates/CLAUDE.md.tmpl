@@ -58,7 +58,8 @@ Briefing untuk Claude Code di repo ini. **Baca ini dulu sebelum tugas apa pun.**
 2. **Gali** — `grep -i "<modul>" docs/SYSTEMMAP-LOG.md docs/decisions/*.md` **sebelum menyentuh
    kode lama**. Kode yang terlihat aneh sering aneh karena alasan; baca "Yang sempat salah"
 3. **Putuskan** — mengubah arah / menutup opsi / berhari-hari → tulis `docs/decisions/00X` dulu
-4. **Kerjakan** — ikuti konvensi & pola kode sekitar. Jangan melebar dari yang diminta
+4. **Kerjakan** — cari **2 tetangga sejenis** dulu, tiru letak & bentuknya; menyimpang dari pola
+   mereka = tulis alasannya. Jangan melebar dari yang diminta
 5. **Tutup** — `/verify` → protokol SYSTEMMAP → sarankan branch & commit (user yang eksekusi)
 
 > Versi lengkap: **`/work <deskripsi>`**. Untuk **revisi**, langkah 2 wajib — risiko utamanya
@@ -74,8 +75,9 @@ Briefing untuk Claude Code di repo ini. **Baca ini dulu sebelum tugas apa pun.**
 1. **GIT DIJALANKAN USER, BUKAN CLAUDE.** Jangan menjalankan `git init/add/commit/push/merge/
    cherry-pick/rebase`, membuat branch, membuka PR, atau men-deploy. **Boleh menyarankan** nama
    branch & pesan commit sesuai konvensi — user yang mengeksekusi. {{TAUTAN_GIT}}
-2. **Ikuti konvensi koding** {{TAUTAN_KONVENSI}}. Komentar **hanya "WHY"** yang non-obvious;
-   {{BAHASA_KODE_KOMENTAR}}; DRY (rule of three), fungsi kecil, type everything.
+2. **Ikuti konvensi koding** {{TAUTAN_KONVENSI}}. **Komentar & docblock default NOL** — tulis hanya
+   kalau tanpanya orang akan "merapikan" baris itu lalu merusaknya; jangan buka berkas dengan
+   ringkasan isinya. Satu konsep = satu nama. {{BAHASA_KODE_KOMENTAR}}
 3. **Rujuk dokumen, jangan mengarang.** Ragu soal keputusan → cek dokumen atau tanya user.
 4. **Update SYSTEMMAP** saat pekerjaan selesai — protokolnya di [docs/SYSTEMMAP.md](docs/SYSTEMMAP.md).
    Keputusan besar ditulis di `docs/decisions/` **sebelum** dikerjakan, bukan sesudah.

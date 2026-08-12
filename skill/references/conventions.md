@@ -47,12 +47,11 @@ ini, dan ongkosnya nol.
 - **Nama = dokumentasi.** Nama menjelaskan *maksud*, bukan tipe.
   `$d`/`data2`/`handle()` ❌ → `$publishedAt`/`activeProjects`/`publishProject()` ✅
   Fungsi = kata kerja. Boolean = `is/has/can`. Koleksi = plural.
-- **Komentar hanya "WHY" yang non-obvious.** Kalau komentar cuma menerjemahkan kode, hapus —
-  perbaiki penamaannya.
-  - Dibenarkan: keputusan non-obvious · jebakan ("jangan ubah urutan ini karena…") · aturan bisnis
-    tak terlihat · workaround + alasan · regex/algoritma rumit
-  - Dilarang: menerjemahkan kode jelas · penanda obvious (`// constructor`) · komentar usang
-    (lebih buruk dari tanpa komentar)
+- **Satu konsep = satu nama, di seluruh repo.** Sinonim lebih merusak daripada nama jelek: nama
+  jelek yang konsisten tetap bisa di-`grep`; dua nama untuk satu benda membuat pencarian
+  mengembalikan **separuh** hasil, dan yang mencari tak pernah tahu ada separuh lagi.
+- **Komentar: default NOL.** Ia pengecualian yang harus dibenarkan, bukan kelengkapan berkas.
+  Uji tunggalnya di bawah — berlaku untuk `//` **maupun** docblock.
 - **Fungsi kecil & fokus.** Idealnya < 20 baris, satu tingkat abstraksi. Maks ~3–4 parameter.
   **Early return** daripada nested if.
 - **Error handling eksplisit.** Jangan telan error diam-diam (`catch {}` kosong). Validasi di
@@ -60,6 +59,31 @@ ini, dan ongkosnya nol.
 - **Konfigurasi via env/config, bukan hardcode** (URL, limit, flag, kredensial).
 - **Tidak ada dead code / kode ter-komentar.** Git sudah menyimpan riwayat.
 - **TODO berformat:** `// TODO: <apa> (<konteks/kapan>)`
+
+### Saat bahasanya campur
+
+Keputusan bahasa (Ronde 4) menentukan **bahasa mana** yang dipakai — ia **tidak** dengan sendirinya
+mencegah satu konsep punya dua nama. Justru proyek yang sengaja memakai istilah domain lokal paling
+rawan: istilah Inggris ikut masuk lewat nama framework, dan keduanya hidup berdampingan.
+
+Bentuk nyata di proyek rujukan — istilah domain dikunci berbahasa Indonesia, tapi satu konsep tetap
+lahir dua kali:
+
+```
+MovementController · MovementSyncController · ResolveMovement     ← satu sisi
+CetakBuktiMutasi                                                  ← sisi lain
+```
+
+*Movement* dan *mutasi* benda yang sama. Rekan tim yang mencari `mutasi` kehilangan tiga berkas;
+yang mencari `movement` kehilangan satu — dan tak ada yang memberi tahu bahwa hasilnya tak lengkap.
+
+Pagar yang bekerja: **untuk tiap konsep domain, pilih satu istilah dan pakai di seluruh lapis** —
+kolom DB, model, controller, endpoint, komponen UI. Kalau istilah lokal yang dipilih, nama teknis
+framework boleh tetap Inggris (`Controller`, `Request`, `Resource`) — yang tak boleh adalah
+**kata bendanya** ikut berganti bahasa.
+
+Bisa diperiksa, dan murah: `grep -ric "<istilah-a>\|<istilah-b>" <src>` — dua-duanya keluar dengan
+jumlah berarti? Itu duplikasi konsep, bukan gaya.
 
 ### Komentar berdiri sendiri — tanpa rujukan
 
@@ -86,23 +110,69 @@ kodenya tetap terlihat seolah terdokumentasi.
 Dokumen di `docs/` tetap saling menautkan; itu memang gunanya. Yang tidak boleh adalah kode
 menautkan ke dokumen.
 
-### Delapan pertanyaan sebelum menulis komentar
+### Uji tunggal sebelum menulis komentar
 
-Jalankan berurutan. Berhenti di jawaban pertama yang cocok.
+> **Tanpa komentar ini, apakah engineer kompeten akan "merapikan" baris ini dan merusaknya?**
 
-| # | Pertanyaan | Jawaban |
-|---|---|---|
-| 1 | Bisa dibuat jelas dengan nama variabel/fungsi? | **Jangan komentar** — perbaiki namanya |
-| 2 | Bisa dibuat jelas dengan struktur kode? | **Jangan komentar** — perbaiki strukturnya |
-| 3 | Ada business rule yang tidak obvious? | **Komentar** |
-| 4 | Ada invariant / constraint penting? | **Komentar** |
-| 5 | Ada alasan security / concurrency / performance? | **Komentar** |
-| 6 | Ada workaround yang berpotensi dianggap bug? | **Komentar** |
-| 7 | Cuma menjelaskan "apa yang dilakukan kode"? | **Jangan komentar** |
-| 8 | Menjelaskan "kenapa harus seperti ini"? | **Komentar** |
+Tidak → **jangan tulis**; perbaiki nama atau strukturnya. Uji ini menggantikan seluruh daftar
+"kapan boleh berkomentar", dan penggantian itu disengaja: **daftar berkategori dibaca sebagai
+menu.** Versi sebelumnya berisi sepuluh izin lawan tiga larangan, dengan satu kategori
+("menjelaskan kenapa harus begini") yang bisa dijawab *ya* untuk baris apa pun — satu baris itu
+menetralkan sembilan lainnya, dan saringannya berhenti menyaring.
 
-Pertanyaan 1 dan 2 yang paling sering terlewat: sebagian besar komentar yang terasa perlu
-sebenarnya penanda bahwa penamaan atau strukturnya yang belum benar.
+Komentar yang lolos uji ini selalu spesifik dan menyebut akibat:
+
+```js
+❌ // Kirim data analytics ke server
+✅ // fetch keepalive, bukan sendBeacon: sendBeacon dibuang diam-diam saat tab ditutup.
+```
+
+**Tiga larangan tanpa pengecualian:**
+
+1. **Menerjemahkan kode.** Termasuk penanda obvious (`// constructor`) dan komentar usang — yang
+   terakhir lebih buruk daripada tanpa komentar.
+2. **Merujuk ke mana pun** — lihat bagian di atas.
+3. **Header berkas yang meringkas isinya** — lihat di bawah.
+
+### Docblock tunduk pada uji yang sama
+
+Titik buta paling mahal: semua larangan di atas terbaca sebagai aturan untuk `//`, sehingga
+**docblock lolos dari semuanya** dan dihasilkan sebagai kelengkapan berkas.
+
+Diukur pada proyek rujukan (123 berkas kode aplikasi, 8.377 baris): komentar totalnya **10,2%** —
+wajar. Tapi **34% di antaranya docblock**, dan pada 10 berkas terpadat docblock mencapai **65%**
+dari seluruh komentar. Sepuluh berkas itu semuanya **di bawah 40 baris**. Sebabnya: header adalah
+**ongkos tetap** ±13 baris tak peduli berkasnya 21 baris atau 400 — jadi rasionya meledak justru
+di berkas terkecil, dan di situlah ia paling tak berguna.
+
+Bentuknya khas — komponen 21 baris dibuka 13 baris header yang mendaftar tiap `variant → kelas
+CSS`, padahal pemetaan itu ada 10 baris di bawahnya:
+
+```
+❌ /**                              ❌ /**
+    * BaseBadge — badge dgn variant.     * Komposisi:
+    * variant:                           * - Sidebar kiri (collapsible)
+    *   success → bg-success             * - Header sticky atas
+    *   warning → bg-warning             * - Footer bawah
+    */                                   */
+   (pemetaan yang sama, 10 baris        (isi <template> yang sama,
+    di bawahnya)                         20 baris di bawahnya)
+```
+
+Keduanya **salinan kedua dari kode di berkas yang sama** — dan berlaku hukum yang sama dengan
+perintah kembar di `CLAUDE.md`: dua salinan pasti berbeda suatu hari, dan yang basi selalu yang
+lebih mudah dibaca. Ubah satu kelas CSS, header itu langsung berbohong tanpa satu pun test gagal.
+
+**Docblock dibenarkan hanya untuk yang tak terbaca dari signature:** satuan (`ms`? `detik`?) ·
+efek samping · invarian pemanggilan ("harus dipanggil setelah X") · jebakan perilaku framework.
+
+Yang **tidak** pernah dibenarkan: meringkas isi berkas · mendaftar ulang props/varian/komposisi ·
+mengulang nama berkas · `@param`/`@return` yang cuma menyalin tipe yang sudah tertulis.
+
+> Satu berkas boleh punya dua-duanya: header upacara **dan** satu kalimat yang benar-benar layak.
+> Pada proyek rujukan ditemukan header 13 baris yang 11 barisnya menyalin `<template>`, sementara
+> 2 baris terakhirnya menjelaskan perilaku auto-unwrap framework yang memang tak terbaca dari
+> kode. **Buang 11, simpan 2.** Jangan buang seluruh bloknya, dan jangan pertahankan seluruhnya.
 
 > **Proyek existing yang sudah terlanjur memakai rujukan** (mode `--audit`): jangan lakukan
 > penggantian massal — itu diff besar tanpa perubahan perilaku. Berhenti menambah yang baru, dan
@@ -176,10 +246,12 @@ Definition of Done** (`CLAUDE.md` aturan #8) supaya jadi satu sumber:
 
 ## Ringkasan (untuk ditempel di dokumen proyek)
 
-1. **Nama jelas > komentar.** Komentar hanya untuk "why".
-2. **DRY** (rule of three), tapi jangan over-abstract.
-3. **Fungsi kecil, early return, ≤3–4 parameter.**
-4. **Type everything.**
-5. **Konsistensi > kepintaran.** Konfigurasi, bukan hardcode.
-6. **Automasi menjaga standar** — bukan disiplin manual.
-7. *(Lapis 2)* **Single Responsibility.** Handler tipis → Service → Repository/Model.
+1. **Komentar default NOL.** Tulis hanya kalau tanpanya orang akan "merapikan" baris itu lalu
+   merusaknya. **Docblock tunduk uji yang sama** — jangan buka berkas dengan ringkasan isinya.
+2. **Satu konsep = satu nama** di seluruh lapis, termasuk saat bahasanya campur.
+3. **DRY** (rule of three), tapi jangan over-abstract.
+4. **Fungsi kecil, early return, ≤3–4 parameter.**
+5. **Type everything.**
+6. **Konsistensi > kepintaran.** Konfigurasi, bukan hardcode.
+7. **Automasi menjaga standar** — bukan disiplin manual.
+8. *(Lapis 2)* **Single Responsibility.** Handler tipis → Service → Repository/Model.

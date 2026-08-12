@@ -64,9 +64,30 @@ Pekerjaan kecil dan jelas → lewati, langsung kerja.
 
 ### 4. Kerjakan mengikuti yang sudah ada
 
-Ikuti konvensi proyek **dan pola kode di sekitarnya**. Kalau modul sebelah menyelesaikan masalah
-serupa dengan cara tertentu, ikuti — kecuali kamu punya alasan yang layak ditulis sebagai komentar
-"why". Konsistensi lebih berharga daripada perbaikan gaya setempat.
+**Sebelum menulis baris pertama di proyek existing: cari dua tetangga.** Ini menjawab tiga
+pertanyaan sekaligus — nulis di mana, bentuknya bagaimana, dan apakah aku melanggar yang sudah ada.
+
+```bash
+# 1. di mana barang sejenis tinggal?
+ls <dir-yang-menampung-hal-serupa>/
+git log --diff-filter=A --name-only --format= | grep -i "<jenis>" | head
+
+# 2. dua implementasi terdekat — tiru bentuknya, bukan isinya
+grep -rl "<antarmuka/konsep sejenis>" <src> | head -3
+```
+
+Yang ditiru dari tetangga: **letak berkas · penamaan · lapisan yang dilewati · bentuk masukan &
+keluaran · cara error ditangani.** Kalau dua tetangga ternyata berbeda satu sama lain, itu **temuan**
+— sebutkan ke user, jangan diam-diam pilih salah satu; kamu baru saja menemukan inkonsistensi yang
+sudah ada sebelum kamu datang.
+
+> **Menyimpang dari pola tetangga itu keputusan, bukan selera.** Kalau memang harus berbeda,
+> alasannya ditulis — komentar "why" untuk simpangan kecil, `decisions/00X` kalau ia menetapkan
+> pola baru yang akan diikuti berkas berikutnya. Simpangan tanpa jejak akan dibaca sebagai
+> kecerobohan oleh orang berikutnya, lalu "dirapikan" balik.
+
+Konsistensi lebih berharga daripada perbaikan gaya setempat. Pola yang jelek tapi seragam masih bisa
+diperbaiki sekali jalan; dua pola yang bersaing harus dibereskan dulu sebelum apa pun bisa berubah.
 
 **Jangan melebar.** Rapikan yang kamu sentuh; jangan merapikan yang tidak diminta. Perbaikan
 menyelinap membuat diff jadi sulit ditinjau dan sulit di-rollback.
@@ -107,6 +128,7 @@ Salin ini ke bagian aturan (hitung sebagai satu aturan, tetap patuhi pagar 3 bar
 2. **Gali** — `grep -i "<modul>" docs/SYSTEMMAP-LOG.md docs/decisions/*.md` **sebelum menyentuh
    kode lama**. Kode yang terlihat aneh sering aneh karena alasan
 3. **Putuskan** — mengubah arah / menutup opsi / berhari-hari → tulis `docs/decisions/00X` dulu
-4. **Kerjakan** — ikuti konvensi & pola kode sekitar. Jangan melebar dari yang diminta
+4. **Kerjakan** — cari **2 tetangga sejenis** dulu, tiru letak & bentuknya; menyimpang dari pola
+   mereka = tulis alasannya. Jangan melebar dari yang diminta
 5. **Tutup** — `/verify` → protokol SYSTEMMAP → sarankan branch & commit (user yang eksekusi)
 ```

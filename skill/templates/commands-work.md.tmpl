@@ -43,8 +43,20 @@ Kecil dan jelas → lewati langkah ini.
 
 ## 4. Kerjakan
 
-Ikuti konvensi proyek **dan pola kode di sekitarnya**. Menyimpang dari pola sebelah boleh, asal
-alasannya layak ditulis sebagai komentar "why".
+**Cari dua tetangga dulu** — ini yang menjawab "nulis di mana", "bentuknya bagaimana", dan "apakah
+aku melanggar yang sudah ada":
+
+```bash
+ls <dir-yang-menampung-hal-serupa>/
+grep -rl "<antarmuka/konsep sejenis>" <src> | head -3
+```
+
+Tiru **letak berkas · penamaan · lapisan yang dilewati · bentuk masukan & keluaran · cara error
+ditangani**. Dua tetangga ternyata saling berbeda? Itu **temuan** — sebutkan ke user, jangan
+diam-diam pilih salah satu.
+
+**Menyimpang dari pola tetangga itu keputusan, bukan selera.** Simpangan kecil → komentar "why".
+Menetapkan pola baru yang akan diikuti berkas berikutnya → `docs/decisions/00X` dulu.
 
 **Jangan melebar** dari yang diminta. Rapikan yang kamu sentuh, bukan yang kebetulan terlihat.
 

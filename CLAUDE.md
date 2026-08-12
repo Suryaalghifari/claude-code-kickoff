@@ -18,7 +18,7 @@ Isinya **markdown + dua hook Python**. Tak ada aplikasi yang jalan, tak ada depe
 ```
 skill/
 ├── SKILL.md            instruksi utama — 5 fase + 6 pagar
-├── references/         10 berkas metodologi (dimuat sesuai fase)
+├── references/         11 berkas metodologi (dimuat sesuai fase)
 └── templates/          rangka berkas + hooks yang disalin ke proyek pengguna
 install.sh              salin skill/ → ~/.claude/skills/kickoff/
 ```
@@ -61,6 +61,7 @@ install.sh              salin skill/ → ~/.claude/skills/kickoff/
 | Alur `/work` (tambah vs revisi fitur) | [references/workflow.md](skill/references/workflow.md) |
 | Lapis verifikasi & blok bukti | [references/verify.md](skill/references/verify.md) |
 | Mode `--audit` untuk proyek existing | [references/audit.md](skill/references/audit.md) |
+| Mode `--sync` — proyek dari skill versi lama | [references/sync.md](skill/references/sync.md) |
 | Ambang pembusukan, rotasi LOG, hook | [references/maintenance.md](skill/references/maintenance.md) |
 
 > **Tidak ada dokumen tanpa baris di tabel ini.** Menambah referensi berarti menambah barisnya juga.
@@ -99,12 +100,15 @@ install.sh              salin skill/ → ~/.claude/skills/kickoff/
    setelah ada kebutuhan nyata, bukan sebelum.
 7. **Setelah mengubah `skill/`, ingatkan user menjalankan `./install.sh`** — salinan terpasang di
    `~/.claude/skills/kickoff/` tidak ikut berubah sendiri.
-8. **Definition of Done = `/verify` hijau seluruhnya** — sintaks pemasang, hook diuji dua arah,
-   placeholder, router, dan **menjalankan skillnya sungguhan**. Perintahnya di
+8. **Definition of Done = `/verify` hijau seluruhnya** — pemasang, hook dua arah, placeholder,
+   router, pasangan templat, dan **menjalankan skillnya sungguhan**. Perintahnya di
    [`.claude/commands/verify.md`](.claude/commands/verify.md), **satu sumber**.
+9. **Mengubah aturan di `skill/references/` → WAJIB periksa pasangannya di `skill/templates/`.**
+   `references/` cuma instruksi saat kickoff; `templates/` yang sampai ke proyek dan dibaca tiap
+   ngoding. Perbaikan yang berhenti di `references/` tak pernah berlaku. Gerbangnya `/verify` §5.
 
 <!--
-  Aturan 9 ke atas SENGAJA KOSONG.
+  Aturan 10 ke atas SENGAJA KOSONG.
 
   Diisi hanya saat kesalahan yang sama terjadi DUA KALI. Sekali itu kecelakaan; dua kali itu pola.
   Aturan yang lahir dari kegagalan nyata jauh lebih dipatuhi daripada aturan yang ditulis di hari
