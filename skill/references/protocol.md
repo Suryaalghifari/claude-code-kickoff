@@ -98,7 +98,21 @@ daftar berkas yang diubah.
    *(format entri sudah tersedia sebagai blok siap-salin di header LOG — salin, jangan diingat;
    anchor tautannya rapuh dan putusnya diam-diam)*
 3. **Utang** yang belum tuntas → `§Utang Terbuka`, **jangan dikubur di dalam entri log**
-4. **User yang commit** — bersama kode fiturnya, supaya peta selalu sinkron
+4. **Kosongkan `§Sedang Berjalan`** — pekerjaannya sudah ditutup; checkpoint yang tertinggal akan
+   dibaca sesi berikutnya sebagai pekerjaan menggantung, dan itu lebih menyesatkan daripada kosong
+5. **User yang commit** — bersama kode fiturnya, supaya peta selalu sinkron
+
+### `§Sedang Berjalan` — checkpoint, bukan catatan kerja
+
+Diisi saat **mulai mengerjakan** dan di tiap titik jeda; dikosongkan di langkah 4 di atas. Maks 5
+baris, tiga isian: **sudah beres (jangan diulang) · berikutnya · setengah jalan.**
+
+Bedanya dengan §Utang Terbuka: utang itu yang **sengaja ditunda** dan boleh menggantung berminggu;
+ini yang **sedang berlangsung** dan seharusnya kosong lagi hari itu juga. Keduanya tercampur =
+dua-duanya berhenti dipercaya.
+
+Baris "sudah beres" yang paling menentukan — ia mencegah pengulangan hal yang tak bisa diulang:
+migrasi yang sudah jalan, data yang sudah terbentuk, panggilan ke layanan luar.
 
 > Jangan menandai ✅ sebelum Definition of Done hijau **seluruhnya**, termasuk verifikasi
 > end-to-end. Belum diverifikasi = 🟨, bukan ✅. "Kelihatan jalan" ≠ selesai.

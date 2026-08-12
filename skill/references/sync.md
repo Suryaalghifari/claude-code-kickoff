@@ -51,6 +51,9 @@ Cari penanda kiri; kalau ketemu, berkas itu basi dan usulkan penggantinya.
 | lapis 3 tanpa pemeriksaan jumlah query | gerbang query untuk alur yang menyentuh DB | `.claude/commands/verify.md` |
 | tak ada `0X-deployment.md` padahal deploy sudah jalan | realitas deploy dibaca dari CI/Dockerfile | usulkan dokumen baru — lihat `audit.md` §A2 |
 | **tak ada `.claude/hooks/destructive-guard.py`** | pagar perintah perusak data | salin hook + daftarkan `PreToolUse`/`Bash` + isi `deny` sesuai stack (`interview.md`) |
+| tak ada `.claude/commands/{revise,fix,pause}.md` | tiga mode kerja + checkpoint | salin templatnya; `work.md` jadi pemegang alur, sisanya delta |
+| `SYSTEMMAP.md` tanpa `§Sedang Berjalan` | checkpoint pekerjaan terputus | sisipkan section di bawah §Fokus + perbarui `session-start.py` |
+| protokol SYSTEMMAP masih "4 langkah" | jadi 5 — langkah 4 mengosongkan §Sedang Berjalan | `SYSTEMMAP.md` §Protokol Update |
 
 > Baris terakhir **prioritas tertinggi** apa pun urutan lainnya: proyek tanpa pagar ini bisa
 > kehilangan seluruh basis datanya dalam satu perintah, dan itu satu-satunya kerusakan di daftar ini

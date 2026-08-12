@@ -100,8 +100,8 @@ install.sh              salin skill/ → ~/.claude/skills/kickoff/
    setelah ada kebutuhan nyata, bukan sebelum.
 7. **Setelah mengubah `skill/`, ingatkan user menjalankan `./install.sh`** — salinan terpasang di
    `~/.claude/skills/kickoff/` tidak ikut berubah sendiri.
-8. **Definition of Done = `/verify` hijau seluruhnya** — pemasang, hook dua arah, placeholder,
-   router, pasangan templat, dan **menjalankan skillnya sungguhan**. Perintahnya di
+8. **Definition of Done = `/verify` hijau seluruhnya** — pemasang, hook, placeholder, router,
+   pasangan templat, ambang ukuran, dan **menjalankan skillnya sungguhan**. Perintahnya di
    [`.claude/commands/verify.md`](.claude/commands/verify.md), **satu sumber**.
 9. **Mengubah aturan di `skill/references/` → WAJIB periksa pasangannya di `skill/templates/`.**
    `references/` cuma instruksi saat kickoff; `templates/` yang sampai ke proyek dan dibaca tiap

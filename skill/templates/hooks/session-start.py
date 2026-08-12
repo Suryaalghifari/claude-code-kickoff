@@ -60,6 +60,20 @@ def main() -> int:
     focus = next((l for l in lines if l.startswith("## 🎯")), None)
     parts.append(clip(focus.lstrip("# ")) if focus else "🎯 Fokus belum diisi")
 
+    # Sedang berjalan — checkpoint pekerjaan yang terputus. Paling atas: sesi yang mati di
+    # tengah kerja meninggalkan ini, dan mengulanginya bisa merusak (migrasi, data, berkas).
+    running = [
+        clip(l)
+        for l in section(lines, r"sedang berjalan")
+        if l.strip().startswith("-")
+    ]
+    if running:
+        parts.append(
+            "\n### ⚠️ Ada pekerjaan yang belum ditutup\n"
+            + "\n".join(running[:MAX_ROWS])
+            + "\n**Selesaikan atau tutup dulu sebelum mulai hal baru.**"
+        )
+
     # Utang terbuka — heading bebas asal memuat kata "utang"
     debts = [clip(l) for l in section(lines, r"utang") if is_data_row(l)]
     # buang baris header tabel

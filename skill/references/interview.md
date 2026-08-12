@@ -133,6 +133,42 @@ untuk perintah yang tak ada di proyek ini.
 
 ---
 
+## Berkas gores `.kickoff-wawancara.md`
+
+Ditulis ulang **setiap selesai satu ronde** — bukan di akhir. Sesi yang mati di tengah Ronde 3
+meninggalkan Ronde 1–2 utuh, dan itu yang membuat `--resume` punya bahan.
+
+```markdown
+# Wawancara kickoff — berkas sementara, hapus di akhir Fase 3
+
+## Ronde 1 — SELESAI
+- dibangun: <satu kalimat>
+- pemakai: <siapa, melakukan apa>
+- tanda selesai: <...>
+- umur & pembaca: <dirawat berapa lama · siapa yang membaca kodenya>
+
+## Ronde 2 — SELESAI
+- mahal kalau salah: <daftar terurut, dengan ongkos jam/minggu>
+- murah diubah: <yang sengaja tidak didokumentasikan>
+
+## Ronde 3 — BERHENTI DI SINI
+- stack: <...>
+- bentuk repo: <...>
+- akses data: [BELUM]
+
+## Ronde 4 — belum
+```
+
+Aturannya:
+
+- **Tandai ronde yang sudah beres `SELESAI`**, dan yang sedang berjalan `BERHENTI DI SINI`. Tanpa
+  penanda, `--resume` tak tahu harus mulai dari mana dan akan mengulang.
+- **Salin jawaban user apa adanya**, jangan diringkas jadi kesimpulanmu. Ringkasan menghapus
+  justru bagian yang nanti kamu butuhkan untuk menulis alasan di tabel keputusan.
+- **`[BELUM]` tetap ditulis `[BELUM]`** — jangan diisi tebakan supaya terlihat lengkap.
+- Masuk `.gitignore` sejak dibuat; **dihapus di akhir Fase 3.** Berkas ini basi begitu isinya
+  pindah ke `CLAUDE.md`, dan transkrip basi yang tertinggal akan dibaca sebagai dokumen.
+
 ## Kriteria konvergen
 
 Berhenti mewawancara **hanya** kalau ketiganya terpenuhi:

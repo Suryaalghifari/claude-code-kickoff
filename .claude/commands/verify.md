@@ -94,7 +94,22 @@ grep -c '^|' skill/references/sync.md
 Yang diperiksa bukan kesamaan kata per kata — `templates/` memang lebih ringkas. Yang diperiksa:
 **tak ada aturan di satu sisi yang sudah dicabut di sisi lain.**
 
-## 6. Alur nyata — yang paling menentukan
+## 6. Ambang ukuran
+
+`SKILL.md` dimuat **tiap kali skill dijalankan** — sama seperti `CLAUDE.md` di proyek, jadi
+ambangnya sama. Ia sempat tumbuh 189 → 224 baris dalam satu sesi tanpa ada yang menahan.
+
+```bash
+awk 'END{print FILENAME": "NR" (maks 200)"}' skill/SKILL.md
+awk 'END{if(NR>400) print FILENAME": "NR" — LEBIH DARI 400, pecah"}' skill/references/*.md
+awk 'END{print FILENAME": "NR" (maks 200)"}' CLAUDE.md
+```
+
+Lewat ambang → **badan penjelasnya pindah ke `references/`, sisakan perintah + tautan.** Yang tak
+boleh dipangkas: keenam pagar dan tabel berkas Fase 3 — keduanya mengikat perilaku, bukan
+menjelaskannya.
+
+## 7. Alur nyata — yang paling menentukan
 
 Empat langkah di atas membuktikan berkasnya utuh. **Tak satu pun membuktikan skillnya bekerja.**
 

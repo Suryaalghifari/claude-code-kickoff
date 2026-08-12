@@ -44,8 +44,11 @@ lalu ketik:
 Setelah kickoff, proyek dapat dua perintah sendiri:
 
 ```
-/work <deskripsi>     # mulai satu pekerjaan — tambah atau revisi fitur
+/work <fitur baru>    # tambah fitur — memuat alur lima langkah lengkap
+/revise <yang diubah> # ubah perilaku yang sudah ada — risiko utamanya regresi
+/fix <gejala bug>     # perbaiki yang rusak — reproduksi dulu, baru perbaiki
 /verify               # jalankan Definition of Done lengkap + verifikasi alur nyata
+/pause                # simpan keadaan pekerjaan yang belum selesai, lalu berhenti
 ```
 
 ---
@@ -81,7 +84,10 @@ docs/
 └── decisions/               keputusan skala-fitur, ditulis SEBELUM dikerjakan
 .claude/
 ├── settings.json            allowlist izin + deny git + hooks
-├── commands/verify.md       /verify — DoD dijalankan, bukan diingat
+├── commands/
+│   ├── work.md · revise.md · fix.md   tiga mode kerja — work.md pemegang alurnya
+│   ├── verify.md            /verify — DoD dijalankan, bukan diingat
+│   └── pause.md             simpan checkpoint saat sesi harus berhenti
 └── hooks/
     ├── session-start.py     suntik §Fokus + §Utang tiap awal sesi
     ├── secret-scan.py       tolak menulis rahasia ke berkas (blokir, exit 2)
@@ -89,7 +95,7 @@ docs/
 .gitignore · .graphifyignore
 ```
 
-## Kerja sehari-hari: `/work`
+## Kerja sehari-hari: `/work` · `/revise` · `/fix`
 
 Setup dan verifikasi saja tak cukup — yang menentukan justru **hari kerja biasa**. Lima langkah,
 dan langkah 2 yang paling sering dilewat:
@@ -98,22 +104,37 @@ dan langkah 2 yang paling sering dilewat:
 2. **Gali** — `grep -i "<modul>" docs/SYSTEMMAP-LOG.md docs/decisions/*.md` **sebelum menyentuh
    kode lama**
 3. **Putuskan** — mengubah arah / berhari-hari → tulis `docs/decisions/00X` dulu
-4. **Kerjakan** — ikuti konvensi & pola sekitar; jangan melebar dari yang diminta
-5. **Tutup** — `/verify` → protokol SYSTEMMAP → sarankan branch & commit
+4. **Kerjakan** — cari 2 tetangga sejenis, tiru bentuknya; isi §Sedang Berjalan; jangan melebar
+5. **Tutup** — `/verify` → protokol SYSTEMMAP → kosongkan §Sedang Berjalan → sarankan commit
 
 **Kenapa langkah 2 genting:** kode yang terlihat aneh sering aneh *karena alasan*. Pada proyek
 rujukan, sebuah fitur analytics memakai `fetch keepalive` alih-alih `sendBeacon` yang lebih ringkas.
 Tanpa membaca LOG, "merapikannya" balik ke `sendBeacon` terasa seperti perbaikan — padahal itu
 persis bug yang dulu membuat fitur rusak diam-diam **15 hari**.
 
-|  | Menambah fitur | Merevisi fitur |
-|---|---|---|
-| Langkah 2 | opsional | **wajib** — ini inti pekerjaannya |
-| Risiko utama | salah bentuk sejak awal | **regresi** |
-| Bukti verifikasi | alur baru jalan | alur baru jalan **dan yang lama tak rusak** |
+|  | `/work` tambah | `/revise` ubah | `/fix` bug |
+|---|---|---|---|
+| Langkah 2 | opsional | **wajib** — ini inti pekerjaannya | **wajib** + lacak kapan ia masuk |
+| Risiko utama | salah bentuk sejak awal | **regresi** | **menambal gejala, bukan sebab** |
+| Bukti verifikasi | alur baru jalan | baru jalan **dan lama tak rusak** | **gagal → perbaiki → lolos** |
+
+Kelima langkahnya identik; yang berbeda bobot dan buktinya. Karena itu `work.md` memegang alur
+lengkapnya dan `revise.md`/`fix.md` hanya menyatakan deltanya — tiga salinan alur yang sama pasti
+berbeda suatu hari.
 
 > Di proyek yang baru di-`--audit`, LOG masih kosong — riwayat git jadi penggantinya
 > (`git log --oneline -- <berkas>`, `git log -S '<potongan>'`) sampai entri mulai terkumpul.
+
+### Kalau sesi putus di tengah kerja
+
+Protokol menulis di **akhir**, jadi konteks yang habis di tengah membuat seluruh bagian tengah
+hilang — dan sesi berikutnya melihat 🟨 lalu **mengulang dari awal**. Sebagian pekerjaan tak bisa
+diulang: migrasi yang sudah jalan, data yang sudah terbentuk.
+
+`SYSTEMMAP.md` §Sedang Berjalan menampung tiga baris — **sudah beres (jangan diulang) · berikutnya ·
+setengah jalan** — diisi saat mulai mengerjakan, dikosongkan saat ditutup. Hook `SessionStart`
+memancarkannya di awal sesi berikutnya, dan **hanya kalau tak kosong**, jadi ongkosnya nol saat
+tak ada yang menggantung. Berhenti mendadak → **`/pause`**.
 
 ## Peta kode graphify (opsional)
 

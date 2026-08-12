@@ -1,0 +1,47 @@
+---
+description: Ubah perilaku yang sudah ada — risiko utamanya regresi
+argument-hint: <apa yang mau diubah, dan jadi seperti apa>
+---
+
+Revisi: **$ARGUMENTS**
+
+**Mode: revisi.** Yang diubah sudah jalan dan sudah dipakai. Risiko utamanya bukan salah bentuk —
+tapi **regresi**: yang baru jalan, yang lama diam-diam rusak.
+
+Jalankan **kelima langkah di [`work.md`](work.md)** — itu satu-satunya salinan alurnya. Yang
+berbeda di mode ini:
+
+## Langkah 2 — WAJIB, dan ini inti pekerjaannya
+
+Di `/work` langkah ini opsional. Di sini **tidak boleh dilewat**, dan hasilnya dilaporkan sebelum
+menyentuh apa pun:
+
+```bash
+grep -i "<modul/fitur>" docs/SYSTEMMAP-LOG.md docs/decisions/*.md
+git log --oneline -- <berkas yang mau diubah>
+```
+
+Bentuk yang sekarang mungkin **hasil keputusan sadar**, bukan kebetulan. Kode yang terlihat aneh
+sering aneh karena alasan — dan alasan itu biasanya tercatat di LOG bagian "Yang sempat salah",
+atau di `decisions/`.
+
+Ketemu `decisions/` yang mengunci bentuk sekarang? **Revisi ini membatalkan keputusan lama** →
+langkah 3 wajib: buat berkas keputusan baru, tandai yang lama `⚠️ DIGANTI oleh 00Y`. Jangan sunting
+yang lama.
+
+## Sebelum mengetik — satu pertanyaan
+
+> **Apa yang bisa rusak karena perubahan ini, dan bagaimana saya membuktikannya tidak rusak?**
+
+Jawabannya masuk ke rencana verifikasi, bukan diserahkan ke harapan. Kalau tak terjawab, kamu belum
+tahu cukup untuk mulai.
+
+## Langkah 5 — buktinya dua, bukan satu
+
+`/verify` harus menunjukkan **alur baru jalan DAN alur lama tidak rusak**. Bukti yang cuma
+menyebut yang baru berarti belum diverifikasi.
+
+Entri LOG-nya juga berbeda: bukan "apa yang dibangun", tapi **apa yang berubah dan kenapa yang lama
+tak cukup** — itu yang menyelamatkan orang berikutnya dari mengembalikannya.
+
+Belum diverifikasi = **🟨, bukan ✅**.

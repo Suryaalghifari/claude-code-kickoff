@@ -11,14 +11,19 @@ Status pengerjaan seluruh pekerjaan. **Sumber kebenaran progres** — sekali lih
 
 ## Protokol Update (WAJIB dibaca Claude)
 
-Saat **satu pekerjaan selesai** — 4 langkah:
+Saat **satu pekerjaan selesai** — 5 langkah:
 
 1. **Status** di tabel → ✅ (isi Tanggal & Ref), lalu cek dependensi: ada yang jadi terbuka?
 2. **Entri** di paling atas [SYSTEMMAP-LOG.md](SYSTEMMAP-LOG.md) + satu baris di [§Log](#log)
    (ringkasan ≤105 karakter). Formatnya tersedia sebagai blok siap-salin di header LOG — **salin,
    jangan diingat**; anchor tautannya rapuh dan putusnya diam-diam
 3. **Utang** yang belum tuntas → [§Utang Terbuka](#utang-terbuka), jangan dikubur di dalam entri
-4. **User yang commit**, bersama kode fiturnya
+4. **Kosongkan [§Sedang Berjalan](#-sedang-berjalan)** — checkpoint yang tertinggal dibaca sesi
+   berikutnya sebagai pekerjaan menggantung
+5. **User yang commit**, bersama kode fiturnya
+
+Pekerjaan **belum** selesai tapi sesinya berhenti → **`/pause`**: isi §Sedang Berjalan, jangan
+sentuh status/LOG.
 
 Sebelum mengerjakan sesuatu yang **besar**: tulis berkas keputusan di `decisions/` lebih dulu.
 
@@ -38,6 +43,26 @@ Sebelum mengerjakan sesuatu yang **besar**: tulis berkas keputusan di `decisions
 ## 🎯 Fokus: {{FOKUS}}
 
 <!-- Satu baris saja. Alasannya di decisions/, bukan di sini. -->
+
+---
+
+## 🔄 Sedang Berjalan
+
+<!--
+  KOSONG saat tak ada pekerjaan menggantung — itu keadaan normalnya.
+
+  Diisi saat masuk langkah "Kerjakan" dan di tiap titik jeda, dikosongkan saat pekerjaan ditutup.
+  Gunanya satu: sesi berikutnya tahu SAMPAI MANA, bukan cuma sedang mengerjakan apa.
+
+  Baris pertama yang terpenting — ia mencegah pengulangan pekerjaan yang tak bisa diulang
+  (migrasi yang sudah jalan, data yang sudah terbentuk, berkas yang sudah dipindah).
+
+  Maks 5 baris. Ini status, bukan catatan kerja — penalaran tetap ke decisions/.
+
+  - **Sudah beres (JANGAN diulang):** <yang tak boleh dikerjakan dua kali>
+  - **Berikutnya:** <langkah tepat setelah ini>
+  - **Setengah jalan:** <yang sudah disentuh tapi belum tuntas/teruji>
+-->
 
 ---
 

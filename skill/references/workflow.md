@@ -102,18 +102,37 @@ Belum diverifikasi = **🟨**, bukan ✅.
 
 ---
 
-## Menambah vs merevisi — bedanya nyata
+## Tiga mode, tiga perintah
 
-| | Menambah fitur | Merevisi fitur |
-|---|---|---|
-| Langkah 2 | Opsional, sering kosong | **Wajib.** Ini inti pekerjaannya |
-| Risiko utama | Salah bentuk sejak awal | **Regresi** — mengulang bug lama |
-| Bukti verifikasi | Alur baru jalan | Alur baru jalan **dan yang lama tak rusak** |
-| Entri LOG | Apa yang dibangun | **Apa yang berubah & kenapa yang lama tak cukup** |
+| | `/work` tambah | `/revise` ubah | `/fix` bug |
+|---|---|---|---|
+| Langkah 2 | opsional, sering kosong | **wajib** — ini inti pekerjaannya | **wajib** + `git log -S` cari kapan ia masuk |
+| Risiko utama | salah bentuk sejak awal | **regresi** — mengulang bug lama | **menambal gejala, bukan sebab** |
+| Sebelum mulai | — | *"apa yang bisa rusak, dan bagaimana membuktikannya tidak?"* | **reproduksi dulu** — belum bisa mengulang gagalnya = belum boleh memperbaiki |
+| Bukti verifikasi | alur baru jalan | baru jalan **dan lama tak rusak** | **gagal → perbaiki → lolos**, berurutan |
+| Entri LOG | apa yang dibangun | apa yang berubah & **kenapa yang lama tak cukup** | **akar sebabnya apa** |
 
-Untuk revisi, tambahkan satu pertanyaan sebelum mulai: *"apa yang bisa rusak karena perubahan ini,
-dan bagaimana saya membuktikannya tidak rusak?"* Jawabannya masuk ke rencana verifikasi, bukan
-diserahkan ke harapan.
+**Kelima langkahnya identik** — yang berbeda cuma bobot dan bukti. Karena itu `work.md` memuat alur
+lengkapnya dan `revise.md`/`fix.md` hanya menyatakan deltanya. Menyalin kelima langkah ke tiga
+berkas berarti tiga salinan yang pasti berbeda suatu hari, dan yang basi selalu yang lebih mudah
+dibaca.
+
+> **Salah mode itu mahal.** Menggarap revisi lewat `/work` melewati penggalian riwayat — dan itu
+> langkah yang mencegah regresi. Ragu antara revisi dan bug? **Ambil `/fix`**: ia menuntut
+> reproduksi, dan menuntut bukti lebih banyak tak pernah merugikan.
+
+## Pekerjaan yang terputus di tengah
+
+Sesi bisa berhenti kapan saja — konteks habis, terminal ditutup. Protokol menulis di **akhir**, jadi
+tanpa checkpoint seluruh bagian tengah hilang, dan sesi berikutnya melihat 🟨 lalu **mengulang dari
+awal**. Sebagian pekerjaan tak bisa diulang: migrasi yang sudah jalan, data yang sudah terbentuk.
+
+Karena itu `SYSTEMMAP.md` punya **§Sedang Berjalan** — diisi saat masuk langkah 4 dan di tiap titik
+jeda, dikosongkan di langkah 5. Tiga baris: **sudah beres (jangan diulang) · berikutnya · setengah
+jalan.** Hook `SessionStart` memancarkannya di awal sesi berikutnya, dan hanya kalau tak kosong.
+
+Berhenti mendadak → **`/pause`**: menulis checkpoint lalu berhenti. Bukan penutupan — tak ada
+`/verify`, tak ada ✅, tak ada entri LOG.
 
 ---
 
@@ -129,6 +148,10 @@ Salin ini ke bagian aturan (hitung sebagai satu aturan, tetap patuhi pagar 3 bar
    kode lama**. Kode yang terlihat aneh sering aneh karena alasan
 3. **Putuskan** — mengubah arah / menutup opsi / berhari-hari → tulis `docs/decisions/00X` dulu
 4. **Kerjakan** — cari **2 tetangga sejenis** dulu, tiru letak & bentuknya; menyimpang dari pola
-   mereka = tulis alasannya. Jangan melebar dari yang diminta
-5. **Tutup** — `/verify` → protokol SYSTEMMAP → sarankan branch & commit (user yang eksekusi)
+   mereka = tulis alasannya. Isi §Sedang Berjalan. Jangan melebar dari yang diminta
+5. **Tutup** — `/verify` → protokol SYSTEMMAP → kosongkan §Sedang Berjalan → sarankan branch &
+   commit (user yang eksekusi)
+
+Perintahnya: **`/work`** tambah · **`/revise`** ubah yang ada · **`/fix`** bug (reproduksi dulu) ·
+**`/pause`** simpan keadaan lalu berhenti.
 ```

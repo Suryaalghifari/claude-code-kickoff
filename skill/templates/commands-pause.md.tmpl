@@ -1,0 +1,35 @@
+---
+description: Simpan keadaan pekerjaan yang belum selesai, lalu berhenti
+---
+
+Pekerjaan ini belum selesai dan sesinya akan berhenti. **Simpan keadaannya sekarang** — apa yang
+tak tertulis akan hilang, dan sesi berikutnya mengulang dari awal.
+
+## Yang dikerjakan
+
+Isi `docs/SYSTEMMAP.md` **§Sedang Berjalan**, maksimal 5 baris:
+
+```markdown
+- **Sudah beres (JANGAN diulang):** <yang tak boleh dikerjakan dua kali>
+- **Berikutnya:** <langkah tepat setelah ini>
+- **Setengah jalan:** <yang sudah disentuh tapi belum tuntas/teruji>
+```
+
+Baris pertama yang paling menentukan. Isi yang **tak bisa diulang tanpa merusak**: migrasi yang
+sudah dijalankan, data yang sudah terbentuk, berkas yang sudah dipindah atau dihapus, layanan luar
+yang sudah dipanggil. Sesi berikutnya membaca ini lewat hook `SessionStart` sebelum menyentuh apa
+pun.
+
+Pastikan juga barisnya ada di tabel status sebagai **🟨** — kalau belum, tambahkan.
+
+## Yang TIDAK dikerjakan
+
+- **Jangan `/verify`.** Ini bukan penutupan; belum ada yang selesai.
+- **Jangan menandai ✅.** Statusnya tetap 🟨.
+- **Jangan menulis entri LOG.** LOG mencatat yang sudah terjadi dan selesai, bukan yang menggantung.
+- **Jangan menyarankan commit** kalau pekerjaannya belum utuh — kecuali user memintanya untuk
+  menyelamatkan pekerjaan, dan katakan terus terang bahwa isinya belum selesai.
+
+## Setelah menulis
+
+Laporkan singkat apa yang disimpan, lalu **berhenti**. Jangan melanjutkan pekerjaannya.

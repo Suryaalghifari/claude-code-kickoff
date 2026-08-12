@@ -1,0 +1,60 @@
+---
+description: Perbaiki sesuatu yang rusak — reproduksi dulu, baru perbaiki
+argument-hint: <gejala yang terlihat, bukan dugaan penyebabnya>
+---
+
+Perbaiki: **$ARGUMENTS**
+
+**Mode: bug.** Risiko utamanya bukan regresi — tapi **menambal gejala, bukan sebab**. Perbaikan
+yang menutupi gejala terlihat berhasil hari ini dan kembali bulan depan dengan bentuk lain.
+
+Jalankan **kelima langkah di [`work.md`](work.md)** — itu satu-satunya salinan alurnya. Yang
+berbeda di mode ini:
+
+## Langkah 0 — REPRODUKSI DULU
+
+**Sebelum membaca kode, sebelum menduga apa pun.** Kalau kamu belum bisa membuat gagalnya terulang,
+kamu tak punya cara membuktikan sudah memperbaikinya — dan "kelihatannya sudah beres" adalah cara
+paling umum bug yang sama kembali.
+
+Catat: **langkah persisnya · apa yang diharapkan · apa yang sebenarnya terjadi · di lingkungan apa.**
+
+Tak bisa direproduksi? **Berhenti dan katakan.** Minta langkah yang lebih lengkap, log, atau
+tangkapan layar. Menebak perbaikan untuk bug yang tak pernah kamu lihat gagalnya adalah menambah
+perubahan tanpa menambah bukti.
+
+## Langkah 2 — WAJIB, plus lacak kapan ia masuk
+
+```bash
+grep -i "<modul/fitur>" docs/SYSTEMMAP-LOG.md docs/decisions/*.md
+git log --oneline -- <berkas terkait>
+git log -S '<potongan kode yang mencurigakan>' --oneline
+```
+
+Baris terakhir yang khas mode ini: ia menemukan commit yang **memperkenalkan** perilakunya. Sering
+kali di situ ketahuan bahwa yang terlihat seperti bug sebenarnya perbaikan yang disengaja untuk
+masalah lain — dan "memperbaikinya" berarti menghidupkan kembali masalah itu.
+
+LOG menyebut bagian ini pernah rusak sebelumnya? **Bug yang sama berulang bukan kebetulan.** Kalau
+ini kali kedua, ia kandidat aturan bernomor di `CLAUDE.md`, bukan sekadar perbaikan lagi.
+
+## Langkah 4 — perbaiki sebabnya
+
+Sebelum menulis perbaikan, sebutkan **akar sebabnya** dalam satu kalimat. Tak bisa? Berarti kamu
+belum menemukannya, dan yang akan kamu tulis adalah tambalan.
+
+Perbaikan yang menyentuh banyak berkas untuk satu gejala biasanya tanda sebabnya belum ketemu.
+
+## Langkah 5 — buktinya berurutan
+
+1. **Sebelum:** reproduksi gagal seperti di Langkah 0
+2. **Sesudah:** langkah yang sama sekarang lolos
+3. **Sekitarnya:** alur lain yang menyentuh kode itu tidak ikut rusak
+
+Kalau ada test: tulis yang **gagal dulu**, baru perbaiki sampai hijau. Test yang ditulis setelah
+perbaikan tak pernah membuktikan ia menangkap bugnya.
+
+Entri LOG-nya berisi **akar sebab**, bukan gejala — itu yang membuat penggalian bulan depan
+berguna. Bagian "Yang sempat salah" diisi apa adanya.
+
+Belum diverifikasi = **🟨, bukan ✅**.

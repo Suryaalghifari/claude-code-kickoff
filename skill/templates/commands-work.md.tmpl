@@ -1,9 +1,16 @@
 ---
-description: Mulai satu pekerjaan (tambah atau revisi fitur) dengan alur yang benar
-argument-hint: <deskripsi fitur / yang mau direvisi>
+description: Tambah fitur baru dengan alur yang benar
+argument-hint: <deskripsi fitur baru>
 ---
 
 Kerjakan: **$ARGUMENTS**
+
+**Mode: tambah fitur.** Kalau ternyata ini mengubah perilaku yang sudah ada → **`/revise`**.
+Kalau memperbaiki sesuatu yang rusak → **`/fix`**. Salah mode bukan soal rapi-rapian: `/revise` dan
+`/fix` mewajibkan langkah yang di sini opsional, dan langkah itu yang mencegah regresi.
+
+> Berkas ini memuat **kelima langkah lengkap** — `/revise` dan `/fix` menjalankan langkah yang sama
+> dan hanya menyatakan bedanya. Kalau alurnya berubah, ubah di sini.
 
 Ikuti lima langkah di bawah. Jangan lompat ke penulisan kode.
 
@@ -60,11 +67,27 @@ Menetapkan pola baru yang akan diikuti berkas berikutnya → `docs/decisions/00X
 
 **Jangan melebar** dari yang diminta. Rapikan yang kamu sentuh, bukan yang kebetulan terlihat.
 
+### Tulis checkpoint sebelum mulai mengetik
+
+Isi `docs/SYSTEMMAP.md` **§Sedang Berjalan**, lalu perbarui di tiap titik jeda:
+
+```markdown
+- **Sudah beres (JANGAN diulang):** <yang tak boleh dikerjakan dua kali>
+- **Berikutnya:** <langkah tepat setelah ini>
+- **Setengah jalan:** <yang sudah disentuh tapi belum tuntas/teruji>
+```
+
+Sesi bisa putus kapan saja — konteks habis, jaringan mati, terminal ditutup. Yang tak tertulis
+hilang, dan sesi berikutnya **mengulang dari awal**. Baris pertama yang paling menyelamatkan:
+migrasi yang sudah jalan atau data yang sudah terbentuk tak boleh dikerjakan dua kali.
+
+Butuh berhenti mendadak? **`/pause`**.
+
 ## 5. Tutup
 
 1. Jalankan **`/verify`** — kelima lapis, termasuk alur nyata
-   *(kalau ini revisi: buktikan juga alur lama tidak rusak)*
 2. Protokol `SYSTEMMAP`: status → entri LOG → utang terbuka → siap di-commit user
-3. Sarankan nama branch + pesan commit sesuai konvensi. **User yang mengeksekusi git.**
+3. **Kosongkan §Sedang Berjalan** — pekerjaan sudah ditutup, checkpoint-nya jadi menyesatkan
+4. Sarankan nama branch + pesan commit sesuai konvensi. **User yang mengeksekusi git.**
 
 Belum diverifikasi = **🟨, bukan ✅**.

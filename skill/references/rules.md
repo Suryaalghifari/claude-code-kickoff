@@ -68,6 +68,22 @@ Panjang bukan ketegasan, dan salinan kedua selalu jadi yang pertama basi.
 
 Aturan yang butuh lebih dari 3 baris biasanya beberapa aturan yang dipaksa jadi satu nomor.
 
+### Menghitungnya — kenapa `sed` dulu, jangan `awk` langsung
+
+```bash
+sed -n '/^## Aturan kerja WAJIB/,/^\(<!--\|## \)/p' CLAUDE.md \
+  | awk '/^[0-9]+\./{if(n)print n" "c; n=$1; c=1; next} n&&/^ /{c++} END{if(n)print n" "c}'
+```
+
+`sed` mengurung hitungan ke blok aturan saja. Tanpa itu, komentar "aturan 9+ SENGAJA KOSONG" yang
+ber-indentasi terhitung sebagai sambungan aturan terakhir — **aturan #8 dilaporkan 13 baris padahal
+3**. Akibatnya kamu "memperbaiki" aturan yang tak rusak, atau lebih buruk: belajar mengabaikan
+checkernya, dan pagar terpenting di berkas ini berhenti ditegakkan.
+
+Range `sed`-nya berhenti di `<!--` **atau** heading berikutnya, supaya tetap benar walau blok
+komentarnya dihapus. Daftar bernomor lain di `CLAUDE.md` (§Mulai sesi, §Alur satu pekerjaan) ikut
+terkurung keluar — itu memang maksudnya.
+
 ## Rawat berkalanya
 
 - Aturan yang tak pernah relevan lagi (bagiannya sudah dihapus) → **buang**. Aturan mati menurunkan

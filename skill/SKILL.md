@@ -28,8 +28,9 @@ dipikirkan tetap dipikirkan.
 Enam pagar ini menjaga hasilnya tetap ramping. Langgar salah satu, hasilnya jadi tumpukan dokumen
 mati — mode kegagalan paling umum dari sistem semacam ini.
 
-1. **JANGAN menulis file apa pun sebelum Fase 3.** Wawancara dulu sampai konvergen. Menghasilkan
-   dokumen dari jawaban setengah matang adalah kegagalan utama skill ini.
+1. **JANGAN menulis file apa pun sebelum Fase 3** — **kecuali** berkas gores
+   `.kickoff-wawancara.md` (lihat Fase 1). Yang dilarang adalah **artefak**; transkrip jawaban
+   bukan artefak, dan tanpanya wawancara yang terputus hilang seluruhnya.
 2. **`CLAUDE.md` maksimal 200 baris.** Ia router, bukan gudang. Tiap baris yang tak mengubah
    keputusan harus keluar.
 3. **Tidak ada dokumen tanpa baris di tabel routing.** Dokumen yang tak punya pemicu tak pernah
@@ -53,6 +54,10 @@ Baca `references/interview.md`, jalankan empat rondenya. Aturan menjalankannya:
 - **Ajukan usulanmu, jangan cuma bertanya.** User datang dengan gagasan kasar; tugasmu
   menajamkannya. Sodorkan opsi + rekomendasi + alasannya, biar ia tinggal mengoreksi.
 - **Berputar sampai konvergen.** Revisi berulang itu fitur, bukan pemborosan.
+
+**Setelah TIAP ronde, tulis `.kickoff-wawancara.md`** — satu-satunya berkas yang boleh lahir sebelum
+Fase 3, dan yang membuat `--resume` punya bahan. Masuk `.gitignore` saat itu juga, dihapus di akhir
+Fase 3. Format & aturan `--resume`: `references/interview.md` §Berkas gores.
 
 **Kriteria keluar** — baru boleh lanjut kalau ketiganya terpenuhi:
 
@@ -86,11 +91,15 @@ placeholder mentah.
 | `docs/decisions/README.md` | `decisions-README.md.tmpl` | Rumah keputusan skala-fitur |
 | `docs/<NN>-conventions.md` | `conventions.md.tmpl` | Lapisan sesuai tingkat kompleksitas |
 | `docs/<NN>-git-workflow.md` | `git-workflow.md.tmpl` | Isi dari `references/git.md` sesuai skala |
-| `.claude/commands/work.md` | `commands-work.md.tmpl` | `/work` — alur satu pekerjaan, lihat `references/workflow.md` |
+| `.claude/commands/work.md` | `commands-work.md.tmpl` | `/work` — **tambah** fitur. Memuat kelima langkah lengkap; lihat `references/workflow.md` |
+| `.claude/commands/revise.md` | `commands-revise.md.tmpl` | `/revise` — **ubah** perilaku yang ada. Hanya delta; alurnya menunjuk `work.md` |
+| `.claude/commands/fix.md` | `commands-fix.md.tmpl` | `/fix` — **bug**. Reproduksi dulu; hanya delta |
+| `.claude/commands/pause.md` | `commands-pause.md.tmpl` | `/pause` — simpan §Sedang Berjalan lalu berhenti |
 | `.claude/commands/verify.md` | `commands-verify.md.tmpl` | `/verify` — DoD dijalankan, lihat `references/verify.md` |
 | `.claude/settings.json` | `settings.json.tmpl` | Hooks + allowlist + deny git + **deny perusak data** — isi `{{DENY_STACK}}` dari stack, lihat `references/interview.md` |
 | `.claude/hooks/*.py` | `hooks/` | `chmod +x` setelah disalin, lalu **uji sekali** |
 | `.gitignore` | — | Sesuai stack. `.env` masuk, `.env.example` di-commit |
+| ~~`.kickoff-wawancara.md`~~ | — | **HAPUS** di akhir fase ini — isinya sudah pindah ke `CLAUDE.md` & dokumen |
 | `.graphifyignore` | `graphifyignore.tmpl` | Hanya bila pakai graphify — lihat di bawah |
 
 Aturan pembagian isi ada di `references/protocol.md` — **patuhi ketat**. Kesalahan paling sering:
@@ -98,16 +107,12 @@ menaruh alasan/penalaran di `SYSTEMMAP.md`. Alasan masuk `docs/decisions/`, buka
 
 ### Peta kode graphify (opsional, tanya dulu)
 
-Jangan pasang tanpa diminta. Kalau user memakainya — atau `graphify-out/` sudah ada:
+**Jangan pasang tanpa diminta.** Kalau user memakainya atau `graphify-out/` sudah ada: salin
+`.graphifyignore` · bangun **`graphify . --code-only`** (proyek baru: tunda sampai ada kodenya, dan
+katakan itu) · isi `{{LANGKAH_GRAPHIFY}}` di `/verify`, atau **hapus seluruh section 6** bila tak
+dipakai — `references/verify.md` §Lapis 6.
 
-1. Salin `.graphifyignore`; pastikan `graphify-out/` masuk `.gitignore`
-2. **Bangun code-only**: `graphify . --code-only` — untuk proyek existing (`--audit`) langsung;
-   untuk proyek baru, tunda sampai kodenya ada, dan katakan itu ke user
-3. Isi `{{LANGKAH_GRAPHIFY}}` di `/verify` sesuai `references/verify.md` §Lapis 6 — atau **hapus
-   seluruh section 6** bila proyek tak memakainya
-
-Proyek existing yang grafnya sudah tercampur (ada node `document`) butuh **rebuild**, bukan
-`update` — deteksi & perintahnya di `references/audit.md` §A1.
+Graf yang sudah tercampur node `document` butuh **rebuild**, bukan `update` — `references/audit.md` §A1.
 
 ## Fase 4 — Verifikasi & serahkan
 
@@ -116,20 +121,17 @@ Periksa sendiri sebelum lapor:
 - [ ] `CLAUDE.md` ≤200 baris, nol `{{PLACEHOLDER}}` tersisa
 - [ ] Tiap dokumen di `docs/` punya baris di tabel routing — dan sebaliknya
 - [ ] `SYSTEMMAP.md` tak memuat paragraf penalaran
-- [ ] Tiap aturan bernomor **≤3 baris** — **hitung, jangan taksir**. `sed` mengurung hitungan ke
-      blok aturan saja; tanpa itu komentar "aturan 9+" yang ber-indentasi ikut terhitung sebagai
-      sambungan aturan #8, dan kamu akan "memperbaiki" aturan yang tak rusak:
+- [ ] Tiap aturan bernomor **≤3 baris** — **hitung, jangan taksir** (kenapa `sed`-nya perlu:
+      `references/rules.md` §Pagar 3 baris):
 
   ```bash
   sed -n '/^## Aturan kerja WAJIB/,/^\(<!--\|## \)/p' CLAUDE.md \
     | awk '/^[0-9]+\./{if(n)print n" "c; n=$1; c=1; next} n&&/^ /{c++} END{if(n)print n" "c}'
   ```
-- [ ] Perintah DoD **hanya di `.claude/commands/verify.md`**. `CLAUDE.md` #8 cuma menunjuk ke sana —
-      jangan menyalin daftar perintahnya (dua salinan pasti berbeda suatu hari)
-- [ ] Hook `chmod +x` **dan benar-benar diuji** — beri masukan yang seharusnya lolos *dan* yang
-      seharusnya diblokir, periksa exit code-nya. **Hook rusak gagal diam-diam**: ia terpasang,
-      terlihat wajar, dan tak pernah menghalangi apa pun
-- [ ] Aturan 9+ kosong
+- [ ] Perintah DoD **hanya di `.claude/commands/verify.md`**; `CLAUDE.md` #8 cuma menunjuk ke sana
+- [ ] **Tiap hook `chmod +x` dan diuji dua arah** — yang seharusnya lolos *dan* yang seharusnya
+      diblokir. Hook rusak gagal diam-diam: terpasang, terlihat wajar, tak menghalangi apa pun
+- [ ] Aturan 9+ kosong · `.kickoff-wawancara.md` sudah dihapus
 
 Lalu laporkan: apa yang dibuat, apa yang **sengaja tidak** dibuat + alasannya, dan sarankan perintah
 commit untuk **dijalankan user**.
@@ -146,47 +148,32 @@ Sistem ini hidup dari satu kebiasaan, dan tanpa itu ia jadi dokumen mati. Sampai
 
 Sebutkan juga:
 
-- **`/work <deskripsi>`** untuk memulai pekerjaan — tambah maupun revisi fitur
-- **`/verify`** sebelum menandai ✅, bukan sesudah
+- **`/work`** tambah · **`/revise`** ubah yang ada · **`/fix`** bug · **`/verify`** sebelum ✅ ·
+  **`/pause`** saat harus ditinggal setengah jalan. Salah mode itu mahal — `/revise` & `/fix`
+  mewajibkan penggalian riwayat yang di `/work` opsional, dan `/fix` menuntut reproduksi dulu
 - `docs/decisions/` diisi **sebelum** mengerjakan fitur besar; `SYSTEMMAP-LOG.md` **sesudah** —
-  terutama saat ada yang sempat salah. Entri LOG hari ini adalah yang menyelamatkan revisi bulan
-  depan dari mengulang bug yang sama
+  terutama saat ada yang sempat salah. Entri LOG hari ini yang menyelamatkan revisi bulan depan
 
 ---
 
-## Mode `--audit` (proyek yang sudah jalan)
+## Mode untuk proyek yang sudah ada
 
-**Alurnya berbeda, bukan sekadar Fase 1–4 minus generate** — arah proyek sudah tertulis di kode,
-jadi ia dibaca dan dikonfirmasi, bukan diwawancarai. Ikuti `references/audit.md`.
+**Pilih modenya dari apa yang sudah dimiliki proyek — tertukar berarti mengerjakan hal yang salah.**
 
-Ringkasnya: inventaris → turunkan keputusan dari kode → **gali kandidat aturan dari `git log`** →
-backfill SYSTEMMAP → laporkan celah → kerjakan hanya yang disetujui.
+| Punya sistem konteks? | Mode | Alurnya |
+|---|---|---|
+| **Belum** — arah proyek cuma tertulis di kode | `--audit` | inventaris → turunkan keputusan dari kode → **gali kandidat aturan dari `git log`** → backfill SYSTEMMAP → laporkan celah. `references/audit.md` |
+| **Sudah**, tapi lahir dari skill versi lama | `--sync` | cari penanda aturan mati (§S2) → hormati batasnya → laporkan per seberapa sering dibaca → tutup dengan entri `#SYNC`. `references/sync.md` |
 
-> Keuntungan yang tak dimiliki proyek baru: riwayat git sudah memuat mode kegagalannya. Klaster
-> commit `fix` per skop menghasilkan kandidat aturan #9+ **sejak hari pertama**, tanpa menunggu
-> gagal dua kali. Teknik ini tervalidasi — lihat `references/audit.md` §A3.
+Dua batas yang berlaku di **kedua** mode:
 
-**Jangan timpa apa pun.** Berkas yang sudah ada hanya diubah setelah perubahannya ditunjukkan dan
-disetujui, satu per satu.
-
-## Mode `--sync` (proyek dari skill versi lama)
-
-Proyek hasil `/kickoff` memegang **salinan** `templates/`. Saat skill diperbaiki, salinan itu tidak
-ikut berubah — jadi proyek lama tetap membaca aturan yang sudah dicabut, tiap sesi. Ikuti
-`references/sync.md`.
-
-Ringkasnya: pastikan modenya tepat → cari penanda aturan mati (tabel §S2) → hormati batasnya →
-laporkan berdasar seberapa sering berkasnya dibaca, kerjakan yang disetujui, tutup dengan entri
-`#SYNC`.
-
-> **Jangan tertukar dengan `--audit`.** `--audit` untuk proyek yang **belum** punya sistem konteks
-> dan menurunkannya dari kode. `--sync` untuk yang **sudah** punya, membandingkannya dengan templat
-> sekarang. **Jangan membersihkan kode** — aturan baru berlaku untuk yang ditulis sesudahnya.
+- **Jangan timpa apa pun.** Berkas yang sudah ada hanya diubah setelah perubahannya ditunjukkan dan
+  disetujui, satu per satu.
+- **Jangan membersihkan kode.** Aturan yang berubah berlaku untuk yang ditulis **sesudahnya**.
 
 ## Perawatan berkala
 
-Diminta merapikan sistem yang sudah berjalan, atau saat `--audit` menemukan pembusukan → ikuti
-`references/maintenance.md`: ambang gemuk, rotasi LOG, dan aturan mana yang layak naik jadi hook.
+Diminta merapikan sistem yang berjalan, atau `--audit` menemukan pembusukan → `references/maintenance.md`.
 
 ## Referensi
 
