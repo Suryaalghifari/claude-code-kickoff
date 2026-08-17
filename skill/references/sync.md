@@ -56,7 +56,8 @@ Cari penanda kiri; kalau ketemu, berkas itu basi dan usulkan penggantinya.
 | `session-start.py` **tanpa pembuangan komentar HTML** (`<!--`) atau filter `"- "` | alarm palsu permanen | perbaiki filternya — **uji dulu**: §Sedang Berjalan kosong harus menghasilkan **nol** peringatan |
 | protokol SYSTEMMAP masih "4 langkah" | jadi 5 — langkah 4 mengosongkan §Sedang Berjalan | `SYSTEMMAP.md` §Protokol Update |
 
-> Baris terakhir **prioritas tertinggi** apa pun urutan lainnya: proyek tanpa pagar ini bisa
+> Baris **pagar `destructive-guard.py`** adalah prioritas tertinggi apa pun urutan tabelnya: proyek
+> tanpa pagar ini bisa
 > kehilangan seluruh basis datanya dalam satu perintah, dan itu satu-satunya kerusakan di daftar ini
 > yang tak bisa dibatalkan.
 

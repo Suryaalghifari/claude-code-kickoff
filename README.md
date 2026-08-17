@@ -10,8 +10,8 @@ dan revisi, baru artefaknya dihasilkan.
 ---
 
 > **Claude Code saja.** Lapis penegakannya — hooks, `/work`, `/verify` — memakai mekanisme khas
-> Claude Code dan tak punya padanan di agen lain. Metodologinya sendiri (`skill/references/`,
-> ±1.200 baris markdown) netral dan bisa dibaca agen mana pun, tapi tanpa penegakan ia kembali
+> Claude Code dan tak punya padanan di agen lain. Metodologinya sendiri (11 berkas di
+> `skill/references/`) netral dan bisa dibaca agen mana pun, tapi tanpa penegakan ia kembali
 > jadi himbauan. Menyebutnya lintas-platform berarti menjanjikan sesuatu yang tak dikirim.
 
 ## Pasang
@@ -23,7 +23,8 @@ chmod +x install.sh
 ./install.sh --uninstall  # melepas
 ```
 
-Versi lama otomatis dicadangkan (`.bak.<timestamp>`), tak pernah ditimpa diam-diam.
+Versi lama otomatis dicadangkan ke `~/.claude/kickoff-backups/kickoff.<timestamp>`, tak pernah
+ditimpa diam-diam.
 
 ## Pakai
 
@@ -41,7 +42,7 @@ lalu ketik:
 /kickoff --sync       # proyek SUDAH punya, tapi lahir dari skill versi lama
 ```
 
-Setelah kickoff, proyek dapat dua perintah sendiri:
+Setelah kickoff, proyek dapat lima perintah sendiri:
 
 ```
 /work <fitur baru>    # tambah fitur — memuat alur lima langkah lengkap

@@ -29,8 +29,8 @@ Enam pagar ini menjaga hasilnya tetap ramping. Langgar salah satu, hasilnya jadi
 mati — mode kegagalan paling umum dari sistem semacam ini.
 
 1. **JANGAN menulis file apa pun sebelum Fase 3** — **kecuali** berkas gores
-   `.kickoff-wawancara.md` (lihat Fase 1). Yang dilarang adalah **artefak**; transkrip jawaban
-   bukan artefak, dan tanpanya wawancara yang terputus hilang seluruhnya.
+   `.kickoff-wawancara.md` dan entri yang mengabaikannya di `.gitignore` (lihat Fase 1). Yang
+   dilarang adalah **artefak**; transkrip sementara bukan artefak.
 2. **`CLAUDE.md` maksimal 200 baris.** Ia router, bukan gudang. Tiap baris yang tak mengubah
    keputusan harus keluar.
 3. **Tidak ada dokumen tanpa baris di tabel routing.** Dokumen yang tak punya pemicu tak pernah
@@ -43,29 +43,13 @@ mati — mode kegagalan paling umum dari sistem semacam ini.
 
 ---
 
-## Fase 1 — Wawancara (jangan tulis file apa pun)
+## Fase 1 — Wawancara (hanya berkas gores + entri `.gitignore` yang boleh ditulis)
 
-Tujuannya menjawab satu pertanyaan: **apa sebenarnya yang dibangun, dan apa yang bikin sengsara
-kalau salah?**
-
-Baca `references/interview.md`, jalankan empat rondenya. Aturan menjalankannya:
-
-- **Satu ronde satu giliran.** Jangan tembakkan 20 pertanyaan sekaligus.
-- **Ajukan usulanmu, jangan cuma bertanya.** User datang dengan gagasan kasar; tugasmu
-  menajamkannya. Sodorkan opsi + rekomendasi + alasannya, biar ia tinggal mengoreksi.
-- **Berputar sampai konvergen.** Revisi berulang itu fitur, bukan pemborosan.
-
-**Setelah TIAP ronde, tulis `.kickoff-wawancara.md`** — satu-satunya berkas yang boleh lahir sebelum
-Fase 3, dan yang membuat `--resume` punya bahan. Masuk `.gitignore` saat itu juga, dihapus di akhir
-Fase 3. Format & aturan `--resume`: `references/interview.md` §Berkas gores.
-
-**Kriteria keluar** — baru boleh lanjut kalau ketiganya terpenuhi:
-
-- [ ] Kamu bisa menjelaskan proyeknya dalam 3 kalimat, dan user membenarkan
-- [ ] Tabel keputusan terkunci terisi, tiap baris beralasan
-- [ ] Daftar "mahal kalau salah" sudah ada — inilah yang menentukan doc set
-
-Kalau belum, teruskan wawancara. Bilang terus terang bagian mana yang masih kabur.
+Pastikan apa yang dibangun dan apa yang mahal jika salah sudah jelas. Baca `references/interview.md`
+**sebelum bertanya**; itu sumber kanonis untuk empat ronde, cara
+menjalankannya, format berkas gores/`--resume`, dan tiga kriteria konvergen. Setelah tiap ronde,
+perbarui `.kickoff-wawancara.md` serta entri `.gitignore` sesuai referensi. Jangan lanjut sebelum
+semua kriteria konvergen terpenuhi dan user membenarkan arah proyek.
 
 ## Fase 2 — Kunci keputusan & pilih dokumen
 
@@ -97,7 +81,7 @@ placeholder mentah.
 | `.claude/commands/pause.md` | `commands-pause.md.tmpl` | `/pause` — simpan §Sedang Berjalan lalu berhenti |
 | `.claude/commands/verify.md` | `commands-verify.md.tmpl` | `/verify` — DoD dijalankan, lihat `references/verify.md` |
 | `.claude/settings.json` | `settings.json.tmpl` | Hooks + allowlist + deny git + **deny perusak data** — isi `{{DENY_STACK}}` dari stack, lihat `references/interview.md` |
-| `.claude/hooks/*.py` | `hooks/` | `chmod +x` setelah disalin, lalu **uji sekali** |
+| `.claude/hooks/*.py` | `hooks/` | `chmod +x` setelah disalin, lalu **uji dua arah** |
 | `.gitignore` | — | Sesuai stack. `.env` masuk, `.env.example` di-commit |
 | ~~`.kickoff-wawancara.md`~~ | — | **HAPUS** di akhir fase ini — isinya sudah pindah ke `CLAUDE.md` & dokumen |
 | `.graphifyignore` | `graphifyignore.tmpl` | Hanya bila pakai graphify — lihat di bawah |
@@ -107,12 +91,9 @@ menaruh alasan/penalaran di `SYSTEMMAP.md`. Alasan masuk `docs/decisions/`, buka
 
 ### Peta kode graphify (opsional, tanya dulu)
 
-**Jangan pasang tanpa diminta.** Kalau user memakainya atau `graphify-out/` sudah ada: salin
-`.graphifyignore` · bangun **`graphify . --code-only`** (proyek baru: tunda sampai ada kodenya, dan
-katakan itu) · isi `{{LANGKAH_GRAPHIFY}}` di `/verify`, atau **hapus seluruh section 6** bila tak
-dipakai — `references/verify.md` §Lapis 6.
-
-Graf yang sudah tercampur node `document` butuh **rebuild**, bukan `update` — `references/audit.md` §A1.
+Kalau user memakainya atau `graphify-out/` sudah ada, baca `references/verify.md` §Lapis 6 untuk
+integrasi `/verify` dan `references/audit.md` §A1 untuk `--code-only`/rebuild. Jangan pasang tanpa
+diminta; pada proyek baru, tunda membangun graf sampai ada kode.
 
 ## Fase 4 — Verifikasi & serahkan
 
@@ -121,13 +102,8 @@ Periksa sendiri sebelum lapor:
 - [ ] `CLAUDE.md` ≤200 baris, nol `{{PLACEHOLDER}}` tersisa
 - [ ] Tiap dokumen di `docs/` punya baris di tabel routing — dan sebaliknya
 - [ ] `SYSTEMMAP.md` tak memuat paragraf penalaran
-- [ ] Tiap aturan bernomor **≤3 baris** — **hitung, jangan taksir** (kenapa `sed`-nya perlu:
-      `references/rules.md` §Pagar 3 baris):
-
-  ```bash
-  sed -n '/^## Aturan kerja WAJIB/,/^\(<!--\|## \)/p' CLAUDE.md \
-    | awk '/^[0-9]+\./{if(n)print n" "c; n=$1; c=1; next} n&&/^ /{c++} END{if(n)print n" "c}'
-  ```
+- [ ] Tiap aturan bernomor **≤3 baris** — **hitung, jangan taksir**; jalankan pemeriksa kanonis di
+      `references/rules.md` §Menghitungnya
 - [ ] Perintah DoD **hanya di `.claude/commands/verify.md`**; `CLAUDE.md` #8 cuma menunjuk ke sana
 - [ ] **Tiap hook `chmod +x` dan diuji dua arah** — yang seharusnya lolos *dan* yang seharusnya
       diblokir, **terhadap berkas hasil templat, bukan buatan tangan**. Dua jebakan yang sudah
@@ -147,13 +123,8 @@ Sistem ini hidup dari satu kebiasaan, dan tanpa itu ia jadi dokumen mati. Sampai
 > `CLAUDE.md`. Di situlah sistem ini mulai benar-benar bekerja — aturan yang lahir dari kegagalan
 > nyata jauh lebih patuh daripada aturan yang ditulis di hari pertama.
 
-Sebutkan juga:
-
-- **`/work`** tambah · **`/revise`** ubah yang ada · **`/fix`** bug · **`/verify`** sebelum ✅ ·
-  **`/pause`** saat harus ditinggal setengah jalan. Salah mode itu mahal — `/revise` & `/fix`
-  mewajibkan penggalian riwayat yang di `/work` opsional, dan `/fix` menuntut reproduksi dulu
-- `docs/decisions/` diisi **sebelum** mengerjakan fitur besar; `SYSTEMMAP-LOG.md` **sesudah** —
-  terutama saat ada yang sempat salah. Entri LOG hari ini yang menyelamatkan revisi bulan depan
+Jelaskan `/work` · `/revise` · `/fix` · `/pause` memakai `references/workflow.md` §Tiga mode dan §Pekerjaan yang terputus; `/verify` wajib sebelum ✅.
+Tegaskan `docs/decisions/` **sebelum** fitur besar dan `SYSTEMMAP-LOG.md` **sesudahnya** sesuai `references/protocol.md`.
 
 ---
 
@@ -187,7 +158,7 @@ Diminta merapikan sistem yang berjalan, atau `--audit` menemukan pembusukan → 
 | `references/git.md` | Aturan git: inti + yang bergantung skala | Fase 3 |
 | `references/protocol.md` | Aturan SYSTEMMAP / decisions / LOG | Fase 3 |
 | `references/rules.md` | Pagar 3 baris + aturan-dari-kegagalan + DoD | Fase 3 & 5 |
-| `references/workflow.md` | Alur satu pekerjaan; tambah vs revisi | Fase 3, saat mengisi `/work` |
+| `references/workflow.md` | Alur work/revise/fix + checkpoint pause | Fase 3 & 5 |
 | `references/verify.md` | Lima lapis verifikasi + blok bukti | Fase 3, saat mengisi `/verify` |
 | `references/audit.md` | Alur proyek existing tanpa sistem konteks | `--audit` |
 | `references/sync.md` | Menyamakan proyek lama dengan templat sekarang | `--sync` |

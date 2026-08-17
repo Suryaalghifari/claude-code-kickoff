@@ -91,7 +91,7 @@ daftar berkas yang diubah.
 
 ---
 
-## Saat sebuah pekerjaan selesai — 4 langkah
+## Saat sebuah pekerjaan selesai — 5 langkah
 
 1. **Status** di `SYSTEMMAP.md` → ✅ (tanggal + ref), dan cek dependensi: ada yang jadi terbuka?
 2. **Entri** baru di paling atas `SYSTEMMAP-LOG.md` + satu baris di `SYSTEMMAP.md §Log`

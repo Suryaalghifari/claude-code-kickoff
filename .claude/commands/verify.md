@@ -5,7 +5,7 @@ description: Jalankan Definition of Done repo skill ini
 Jalankan berurutan, **berhenti di kegagalan pertama**. Jangan lanjut membawa kegagalan, dan jangan
 pernah melaporkan "sebagian besar hijau".
 
-Repo ini isinya markdown + dua hook Python — tak ada build, tak ada suite test. Yang menggantikan
+Repo ini isinya markdown + tiga hook Python — tak ada build, tak ada suite test. Yang menggantikan
 keduanya adalah **menjalankan hooknya sungguhan** dan **menjalankan skillnya sungguhan**.
 
 ## 1. Sintaks pemasang
@@ -16,8 +16,8 @@ bash -n install.sh
 
 ## 2. Hook — diuji dua arah
 
-Hook rusak **gagal diam-diam**: ia terpasang, terlihat wajar, dan tak pernah menghalangi apa pun.
-Karena itu keduanya wajib diperiksa, bukan hanya yang "tidak error".
+Hook rusak **gagal diam-diam**: ia terpasang, terlihat wajar, dan tak pernah menjalankan tugasnya.
+Karena itu ketiganya wajib diperiksa dua arah, bukan hanya yang "tidak error".
 
 ```bash
 printf '%s' '{"tool_input":{"file_path":"a.php","content":"password = \"Sup3rS3cretPw\""}}' \
@@ -34,16 +34,24 @@ yang ditulis sendiri diam-diam menghindari persis kasus yang bikin hooknya ada; 
 lolos dari uji dengan cara itu, dan baru ketahuan di proyek nyata.
 
 ```bash
-d=$(mktemp -d)/docs && mkdir -p "$d"
+VERIFY_REPO_ROOT="$(pwd)"
+VERIFY_TMP_ROOT="$(mktemp -d)"
+mkdir -p "$VERIFY_TMP_ROOT/docs"
 sed -e 's/{{FOKUS}}/x/' -e 's/{{FASE_1}}/Fase 1/' -e 's/{{N}}/1/' -e 's/{{ITEM}}/setup/' \
-  skill/templates/SYSTEMMAP.md.tmpl > "$d/SYSTEMMAP.md"
-cd "$(dirname "$d")" && python3 - <<'EOF'
-import subprocess, sys
-out = subprocess.run([sys.argv[0] if False else "python3",
-    "/home/uyasky/Projects/claude-kickoff/skill/templates/hooks/session-start.py"],
-    capture_output=True, text=True).stdout
-print("⚠️ palsu:", out.count("⚠️"), "(harus 0 — §Sedang Berjalan masih kosong)")
-EOF
+  skill/templates/SYSTEMMAP.md.tmpl > "$VERIFY_TMP_ROOT/docs/SYSTEMMAP.md"
+
+VERIFY_EMPTY_OUT="$(cd "$VERIFY_TMP_ROOT" && \
+  python3 "$VERIFY_REPO_ROOT/skill/templates/hooks/session-start.py")"
+printf 'checkpoint kosong → %s peringatan (harus 0)\n' \
+  "$(printf '%s\n' "$VERIFY_EMPTY_OUT" | grep -c 'Ada pekerjaan yang belum ditutup' || true)"
+
+sed -i '/^## 🔄 Sedang Berjalan$/a\
+- **Berikutnya:** uji checkpoint positif' \
+  "$VERIFY_TMP_ROOT/docs/SYSTEMMAP.md"
+VERIFY_CHECKPOINT_OUT="$(cd "$VERIFY_TMP_ROOT" && \
+  python3 "$VERIFY_REPO_ROOT/skill/templates/hooks/session-start.py")"
+printf '%s\n' "$VERIFY_CHECKPOINT_OUT" | grep -q 'uji checkpoint positif'
+echo "checkpoint terbaca → harus 0: $?"
 ```
 
 Dari folder tanpa `docs/SYSTEMMAP.md` ia harus **diam** dan keluar 0.
@@ -135,7 +143,7 @@ menjelaskannya.
 
 ## 7. Alur nyata — yang paling menentukan
 
-Empat langkah di atas membuktikan berkasnya utuh. **Tak satu pun membuktikan skillnya bekerja.**
+Enam pemeriksaan di atas membuktikan berkasnya utuh. **Tak satu pun membuktikan skillnya bekerja.**
 
 ```bash
 mkdir -p /tmp/uji-kickoff && cd /tmp/uji-kickoff
@@ -155,6 +163,8 @@ bertanya terlalu sering.
 ### Bukti verifikasi
 - `bash -n install.sh` → lolos
 - Hook secret-scan → blokir 2, lolos 0, json rusak 0
+- Hook session-start → checkpoint kosong tanpa peringatan, checkpoint terisi terbaca, berkas hilang diam
+- Hook destructive-guard → blokir 4, lolos 4
 - Placeholder di references/ → 0 tanpa penjelasan
 - Router ↔ references → sinkron N/N
 - **Alur nyata:** <apa yang dijalankan, di folder apa, hasilnya apa yang terlihat>

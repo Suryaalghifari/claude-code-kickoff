@@ -13,7 +13,7 @@ Skill `/kickoff` untuk Claude Code: menyiapkan **sistem konteks** proyek baru â€
 aturan yang ditegakkan, dan tempat menyimpan keputusan. Bukan generator boilerplate; intinya
 **wawancara** yang berputar sampai arah proyek konvergen, baru artefaknya dihasilkan.
 
-Isinya **markdown + dua hook Python**. Tak ada aplikasi yang jalan, tak ada dependensi.
+Isinya **markdown + tiga hook Python**. Tak ada aplikasi yang jalan, tak ada dependensi.
 
 ```
 skill/

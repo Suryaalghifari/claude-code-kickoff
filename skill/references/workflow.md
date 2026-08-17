@@ -95,7 +95,7 @@ menyelinap membuat diff jadi sulit ditinjau dan sulit di-rollback.
 ### 5. Tutup dengan benar
 
 1. **`/verify`** — kelima lapis, termasuk alur nyata
-2. Protokol `SYSTEMMAP` 4 langkah: status → entri LOG → utang → user commit
+2. Protokol `SYSTEMMAP` 5 langkah: status → entri LOG → utang → kosongkan checkpoint → user commit
 3. Sarankan nama branch + pesan commit; **user yang mengeksekusi**
 
 Belum diverifikasi = **🟨**, bukan ✅.

@@ -78,9 +78,8 @@ Untuk tiap dimensi mahal dari Ronde 2, pancing keputusannya sampai final.
 
 Ini yang bikin agen tidak kemana-mana sehari-hari.
 
-1. **Git** — baca `references/git.md` dulu, lalu tanyakan **tiga hal ini saja**; sisanya pakai
-   default dari sana tanpa bertanya:
-   - Operasi git dijalankan user, atau AI boleh? *(default: **user** — sarankan ini)*
+1. **Git** — baca `references/git.md` dulu. Operasi Git **selalu dijalankan user, bukan AI**;
+   jangan tanyakan ulang. Tanyakan **dua hal ini saja**; sisanya pakai default dari sana:
    - Lapisan branch: `main` saja · `main → production` · `main → test → production`?
      *(pilih yang paling kecil yang cukup — menambah lapisan belakangan itu murah)*
    - Rilis bertahap per-PR (merge commit + cherry-pick), atau rilis seluruh `main` sekaligus?
@@ -129,7 +128,7 @@ untuk perintah yang tak ada di proyek ini.
 > Poin 4 bagian terakhir jangan dilewat. "Lint hijau" bukan bukti fitur jalan — dan di situlah
 > mayoritas pekerjaan ditandai selesai padahal belum.
 
-**Keluaran:** isi aturan wajib 1–7 di `CLAUDE.md` + blok perintah DoD yang konkret.
+**Keluaran:** isi aturan wajib 1–8 di `CLAUDE.md`, termasuk blok perintah DoD yang konkret.
 
 ---
 
