@@ -1,23 +1,25 @@
-# claude-kickoff
+# kickoff
 
-Skill `/kickoff` untuk Claude Code: **menyiapkan sistem konteks proyek baru** — dokumen yang tepat,
-aturan yang ditegakkan, dan tempat menyimpan keputusan, supaya agen AI tidak kemana-mana di tengah
-jalan.
+Skill `/kickoff` untuk Claude Code dan Hermes Agent: **menyiapkan sistem konteks proyek baru** —
+dokumen yang tepat, aturan yang ditegakkan, dan tempat menyimpan keputusan, supaya agen AI tidak
+kemana-mana di tengah jalan.
 
 Bukan generator boilerplate. Intinya **wawancara**: arah proyek ditemukan dulu lewat tanya-jawab
 dan revisi, baru artefaknya dihasilkan.
 
 ---
 
-> **Claude Code saja.** Lapis penegakannya — hooks, `/work`, `/verify` — memakai mekanisme khas
-> Claude Code dan tak punya padanan di agen lain. Metodologinya sendiri (11 berkas di
-> `skill/references/`) netral dan bisa dibaca agen mana pun, tapi tanpa penegakan ia kembali
-> jadi himbauan. Menyebutnya lintas-platform berarti menjanjikan sesuatu yang tak dikirim.
+> **Dua distribusi, satu metodologi.** Claude Code mendapat integrasi penuh melalui hooks, settings,
+> dan slash command proyek. Hermes Agent mendapat binding native melalui `AGENTS.md` dan mode
+> `/kickoff`; versi minimumnya sengaja tidak meniru hooks atau wire protocol Claude.
 
 ## Pasang
 
+Jalankan installer target dari root repo.
+
+### Claude Code
+
 ```bash
-cd ~/Projects/claude-kickoff
 chmod +x install.sh
 ./install.sh              # menyalin skill/ → ~/.claude/skills/kickoff/
 ./install.sh --uninstall  # melepas
@@ -26,7 +28,19 @@ chmod +x install.sh
 Versi lama otomatis dicadangkan ke `~/.claude/kickoff-backups/kickoff.<timestamp>`, tak pernah
 ditimpa diam-diam.
 
+### Hermes Agent
+
+```bash
+chmod +x install-hermes.sh
+./install-hermes.sh       # merakit bundle → ~/.hermes/skills/software-development/kickoff/
+```
+
+Versi lama otomatis dicadangkan ke `~/.hermes/kickoff-backups/kickoff.<timestamp>`. Untuk profile
+atau lokasi non-default, set `KICKOFF_HERMES_SKILLS_ROOT` dan `KICKOFF_HERMES_BACKUP_ROOT`.
+
 ## Pakai
+
+### Claude Code
 
 ```bash
 mkdir ~/Projects/proyek-baru && cd ~/Projects/proyek-baru
@@ -52,6 +66,27 @@ Setelah kickoff, proyek dapat lima perintah sendiri:
 /pause                # simpan keadaan pekerjaan yang belum selesai, lalu berhenti
 ```
 
+### Hermes Agent
+
+```bash
+mkdir ~/Projects/proyek-baru && cd ~/Projects/proyek-baru
+hermes
+```
+
+lalu ketik `/kickoff`, `/kickoff --resume`, `/kickoff --audit`, atau `/kickoff --sync`. Mode kerja
+hariannya berada di skill yang sama:
+
+```text
+/kickoff work <fitur baru>
+/kickoff revise <yang diubah>
+/kickoff fix <gejala bug>
+/kickoff verify
+/kickoff pause
+```
+
+Hermes menghasilkan `AGENTS.md` sebagai router proyek. Ia tidak membuat `.claude/`, hooks, atau
+settings pada distribusi minimum ini.
+
 ---
 
 ## Cara kerjanya
@@ -62,7 +97,7 @@ Lima fase. **Tidak ada berkas yang ditulis sebelum Fase 3** — ini disengaja.
 |---|---|---|
 | **1 · Wawancara** | 4 ronde tanya-jawab, berputar sampai konvergen | Ringkasan 3 kalimat + daftar "mahal kalau salah" |
 | **2 · Kunci** | Keputusan dikunci, doc set dipilih lewat rubrik | Daftar dokumen — ditunjukkan sebelum dibuat |
-| **3 · Hasilkan** | Berkas dibuat & diisi dari hasil wawancara | `CLAUDE.md`, `docs/`, `SYSTEMMAP`, `decisions/`, `.claude/settings.json` |
+| **3 · Hasilkan** | Berkas dibuat & diisi dari hasil wawancara | Router platform, `docs/`, `SYSTEMMAP`, `decisions/`, dan integrasi target |
 | **4 · Verifikasi** | Cek batas 200 baris, nol placeholder, routing sinkron | Laporan + saran perintah commit |
 | **5 · Serah terima** | Menjelaskan kebiasaan yang bikin sistem ini hidup | — |
 
@@ -73,7 +108,7 @@ Lima fase. **Tidak ada berkas yang ditulis sebelum Fase 3** — ini disengaja.
 3. **Keputusan terkunci** — stack & pilihan besar, tiap baris wajib punya alasan
 4. **Cara kerja** — git, bahasa, gaya komentar, dan perintah Definition of Done
 
-### Yang dihasilkan
+### Yang dihasilkan di Claude Code
 
 ```
 CLAUDE.md                    router + keputusan terkunci + aturan (maks 200 baris)
@@ -96,7 +131,22 @@ docs/
 .gitignore · .graphifyignore
 ```
 
-## Kerja sehari-hari: `/work` · `/revise` · `/fix`
+Di Hermes, metodologi dan struktur `docs/` tetap sama, tetapi binding platformnya berbeda:
+
+```text
+AGENTS.md                     router + keputusan terkunci + aturan (maks 200 baris)
+docs/
+├── README.md                 index + konvensi dokumen
+├── <NN>-*.md                 hanya yang lolos rubrik "mahal diubah"
+├── SYSTEMMAP.md              status saja — tanpa penalaran
+├── SYSTEMMAP-LOG.md          riwayat & post-mortem, append-only
+└── decisions/                keputusan skala-fitur, ditulis SEBELUM dikerjakan
+.gitignore
+```
+
+Perintah kerja Hermes tetap berada di `/kickoff`; tidak ada salinan `.claude/commands/`.
+
+## Kerja sehari-hari: work · revise · fix
 
 Setup dan verifikasi saja tak cukup — yang menentukan justru **hari kerja biasa**. Lima langkah,
 dan langkah 2 yang paling sering dilewat:
@@ -106,14 +156,14 @@ dan langkah 2 yang paling sering dilewat:
    kode lama**
 3. **Putuskan** — mengubah arah / berhari-hari → tulis `docs/decisions/00X` dulu
 4. **Kerjakan** — cari 2 tetangga sejenis, tiru bentuknya; isi §Sedang Berjalan; jangan melebar
-5. **Tutup** — `/verify` → protokol SYSTEMMAP → kosongkan §Sedang Berjalan → sarankan commit
+5. **Tutup** — jalankan mode verify → protokol SYSTEMMAP → kosongkan §Sedang Berjalan → sarankan commit
 
 **Kenapa langkah 2 genting:** kode yang terlihat aneh sering aneh *karena alasan*. Pada proyek
 rujukan, sebuah fitur analytics memakai `fetch keepalive` alih-alih `sendBeacon` yang lebih ringkas.
 Tanpa membaca LOG, "merapikannya" balik ke `sendBeacon` terasa seperti perbaikan — padahal itu
 persis bug yang dulu membuat fitur rusak diam-diam **15 hari**.
 
-|  | `/work` tambah | `/revise` ubah | `/fix` bug |
+|  | work: tambah | revise: ubah | fix: bug |
 |---|---|---|---|
 | Langkah 2 | opsional | **wajib** — ini inti pekerjaannya | **wajib** + lacak kapan ia masuk |
 | Risiko utama | salah bentuk sejak awal | **regresi** | **menambal gejala, bukan sebab** |
@@ -135,7 +185,8 @@ diulang: migrasi yang sudah jalan, data yang sudah terbentuk.
 `SYSTEMMAP.md` §Sedang Berjalan menampung tiga baris — **sudah beres (jangan diulang) · berikutnya ·
 setengah jalan** — diisi saat mulai mengerjakan, dikosongkan saat ditutup. Hook `SessionStart`
 memancarkannya di awal sesi berikutnya, dan **hanya kalau tak kosong**, jadi ongkosnya nol saat
-tak ada yang menggantung. Berhenti mendadak → **`/pause`**.
+tak ada yang menggantung. Di Hermes, agent membaca checkpoint saat mulai sesi melalui instruksi
+`AGENTS.md`. Berhenti mendadak → **pause** (`/pause` di Claude, `/kickoff pause` di Hermes).
 
 ## Peta kode graphify (opsional)
 
@@ -180,10 +231,10 @@ sudah memuat aturannya sebelum siapa pun menuliskannya.
 
 ## Kalau skillnya sendiri berubah: `--sync`
 
-Proyek hasil `/kickoff` memegang **salinan** `templates/`. Memperbaiki skill lalu `./install.sh`
-**tidak** menyentuh salinan itu — jadi proyek lama tetap membaca aturan yang sudah dicabut, tiap
-sesi, tanpa ada yang menyadarinya. Gejalanya khas: *"aturannya sudah saya perbaiki, tapi kok masih
-dilanggar terus."*
+Proyek hasil `/kickoff` memegang artefak dari template distribusinya. Memperbaiki skill lalu
+memasang ulang distribusi **tidak** menyentuh artefak proyek lama — jadi proyek tetap membaca aturan
+yang sudah dicabut, tiap sesi, tanpa ada yang menyadarinya. Gejalanya khas: *"aturannya sudah saya
+perbaiki, tapi kok masih dilanggar terus."*
 
 `--sync` bekerja dari **tabel penanda aturan mati** (`references/sync.md` §S2) — bukan mendiff
 seluruh berkas. Tiap aturan yang dicabut mewariskan satu penanda yang bisa di-`grep` di proyek
@@ -222,10 +273,11 @@ dari `CLAUDE.md`.** Router ikut ramping dan penegakannya justru menguat.
 
 ## Tiga prinsip yang menyangga semuanya
 
-**1. `CLAUDE.md` itu router, bukan gudang.**
+**1. Berkas konteks utama itu router, bukan gudang.**
 Dokumen yang selalu dimuat harus kecil; sisanya dipanggil saat dibutuhkan lewat tabel *"kalau
 tugasnya X, baca Y"*. Pada proyek rujukan: 11 KB selalu dimuat, 646 KB on-demand. Kalau semuanya
-ikut tiap sesi, jendela konteks habis sebelum satu baris kode dibaca.
+ikut tiap sesi, jendela konteks habis sebelum satu baris kode dibaca. Berkasnya `CLAUDE.md` di
+Claude Code dan `AGENTS.md` di Hermes.
 
 **2. Dokumen dibuat untuk yang mahal diubah.**
 Dari data proyek rujukan — konvensi koding **100%** bertahan, skema data **88%**, design system
@@ -313,11 +365,17 @@ skill/
 │   ├── audit.md              alur proyek existing tanpa sistem konteks
 │   ├── sync.md               menyamakan proyek lama dengan templat sekarang
 │   └── maintenance.md        ambang pembusukan, rotasi LOG, hook
-└── templates/                rangka berkas + hooks yang disalin ke proyek
-install.sh
+└── templates/                rangka berkas + hooks untuk Claude Code
+hermes/
+├── SKILL.md                  router dan binding Hermes
+├── references/sync.md        binding sync Hermes
+└── templates/AGENTS.md.tmpl  router proyek Hermes
+install.sh                    installer Claude Code
+install-hermes.sh             perakit + installer bundle Hermes
 ```
 
-Mengubah skill = edit di `skill/`, lalu `./install.sh` lagi.
+References metodologi tetap kanonis di `skill/references/`; installer Hermes merakitnya bersama
+binding di `hermes/`. Setelah mengubah distribusi, jalankan ulang installer target.
 
 ## Lisensi
 
@@ -327,5 +385,7 @@ Mengubah skill = edit di `skill/`, lalu `./install.sh` lagi.
 
 - Semua perintah git di repo ini **dijalankan user, bukan AI** — sama seperti aturan yang dipasang
   skill ini ke proyek yang dilayaninya.
+- Claude Code menerima penegakan melalui hooks. Hermes memakai integrasi minimum tanpa hooks; beda
+  ini disengaja dan dijelaskan di `hermes/SKILL.md`.
 - Angka & contoh yang dikutip di sini berasal dari satu proyek nyata (369 commit, 15 dokumen,
   ~1 bulan). Bukan angka industri — perlakukan sebagai satu titik data, bukan hukum.
